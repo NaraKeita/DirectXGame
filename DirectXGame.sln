@@ -8,7 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{42878015-67C8-4139-97C4-75066C04CC4C}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		TextFile1.txt = TextFile1.txt
 	EndProjectSection
 EndProject
 Global
