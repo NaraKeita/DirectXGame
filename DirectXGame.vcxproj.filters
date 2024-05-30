@@ -13,14 +13,60 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ヘッダー ファイル\imgui">
+      <UniqueIdentifier>{60fd48b5-c456-41e8-9805-927562389688}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\DirectXGame\externals\imgui\imgui.cpp">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DirectXGame\externals\imgui\imgui_demo.cpp">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DirectXGame\externals\imgui\imgui_draw.cpp">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DirectXGame\externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DirectXGame\externals\imgui\imgui_impl_win32.cpp">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DirectXGame\externals\imgui\imgui_tables.cpp">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DirectXGame\externals\imgui\imgui_widgets.cpp">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl" />
     <FxCompile Include="Object3d.PS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\DirectXGame\externals\imgui\imconfig.h">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DirectXGame\externals\imgui\imgui_internal.h">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DirectXGame\externals\imgui\imstb_rectpack.h">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DirectXGame\externals\imgui\imstb_textedit.h">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DirectXGame\externals\imgui\imstb_truetype.h">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\DirectXGame\externals\imgui\LICENSE.txt">
+      <Filter>ヘッダー ファイル\imgui</Filter>
+    </Text>
   </ItemGroup>
 </Project>
