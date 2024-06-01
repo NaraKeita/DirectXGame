@@ -13,34 +13,34 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="ヘッダー ファイル\imgui">
-      <UniqueIdentifier>{56b81409-5411-4b04-ac06-acd047c00fcc}</UniqueIdentifier>
+    <Filter Include="ImGui">
+      <UniqueIdentifier>{a41900d0-a50e-4df9-bca0-5d8a0e04fbea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\externals\imgui\imgui.cpp">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClCompile Include="externals\imgui\imgui.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\externals\imgui\imgui_demo.cpp">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClCompile Include="externals\imgui\imgui_demo.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\externals\imgui\imgui_draw.cpp">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClCompile Include="externals\imgui\imgui_draw.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\externals\imgui\imgui_impl_dx12.cpp">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClCompile Include="externals\imgui\imgui_impl_dx12.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\externals\imgui\imgui_impl_win32.cpp">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClCompile Include="externals\imgui\imgui_impl_win32.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\externals\imgui\imgui_tables.cpp">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClCompile Include="externals\imgui\imgui_tables.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\externals\imgui\imgui_widgets.cpp">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClCompile Include="externals\imgui\imgui_widgets.cpp">
+      <Filter>ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -48,34 +48,34 @@
     <FxCompile Include="Object3d.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\externals\imgui\imconfig.h">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClInclude Include="externals\imgui\imconfig.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\externals\imgui\imgui.h">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClInclude Include="externals\imgui\imgui.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\externals\imgui\imgui_impl_dx12.h">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClInclude Include="externals\imgui\imgui_impl_dx12.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\externals\imgui\imgui_impl_win32.h">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClInclude Include="externals\imgui\imgui_impl_win32.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\externals\imgui\imgui_internal.h">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClInclude Include="externals\imgui\imgui_internal.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\externals\imgui\imstb_rectpack.h">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClInclude Include="externals\imgui\imstb_rectpack.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\externals\imgui\imstb_textedit.h">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClInclude Include="externals\imgui\imstb_textedit.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\externals\imgui\imstb_truetype.h">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <ClInclude Include="externals\imgui\imstb_truetype.h">
+      <Filter>ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\externals\imgui\LICENSE.txt">
-      <Filter>ヘッダー ファイル\imgui</Filter>
+    <Text Include="externals\imgui\LICENSE.txt">
+      <Filter>ImGui</Filter>
     </Text>
   </ItemGroup>
 </Project>
