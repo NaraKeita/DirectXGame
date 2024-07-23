@@ -99,4 +99,8 @@
       <Filter>ImGui</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="VertexShader.hlsli" />
+    <None Include="Object3d.hlsli" />
+  </ItemGroup>
 </Project>

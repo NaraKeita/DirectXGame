@@ -7,5 +7,8 @@ struct Transform {
 	Vector3 translate;
 };
 
-
-
+Transform cameraTransform{
+    {1.0f, 1.0f, 1.0f },
+    {0.0f, 0.0f, 0.0f },
+    {0.0f, 0.0f, -5.0f}
+};
