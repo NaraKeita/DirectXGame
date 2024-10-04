@@ -1023,7 +1023,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	device->CreateShaderResourceView(textureResource2, &srvDesc2, textureSrvHandleCPU2);
 
 	// textureを読んで転送
-	DirectX::ScratchImage mipImages = LoadTexture("resource/uvChecker.png");
+	/*DirectX::ScratchImage mipImages = LoadTexture("resource/uvChecker.png");*/
+	DirectX::ScratchImage mipImages = LoadTexture("resource/fence/fence.png");
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	ID3D12Resource* textureResource = CrateTextureResource(device, metadata);
 	UploadTextureData(textureResource, mipImages);
@@ -1309,7 +1310,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	indexDataSprite[5] = 2;
 
 	// モデルの読み込み
-	ModelData modelData = LoadObjFile("resource", "plane.obj");
+	//ModelData modelData = LoadObjFile("resource", "plane.obj");
+	ModelData modelData = LoadObjFile("resource/fence", "fence.obj");
 	ID3D12Resource* vertexResourceModel = CreateBufferResource(device, sizeof(VertexData) * modelData.vertices.size());
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewModel{};
@@ -1493,7 +1495,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
 			ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
 			ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
-			ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+			ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.0f, -10.0f, 10.0f);
 			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
