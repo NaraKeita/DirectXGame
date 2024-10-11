@@ -608,6 +608,8 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 			Vector3 normal;
 			s >> normal.x >> normal.y >> normal.z;
 
+
+
 			// 反転
 			normal.x *= 1.0f;
 			normals.push_back(normal);
