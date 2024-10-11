@@ -47,10 +47,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Object3d.VS.hlsl" />
-    <FxCompile Include="Object3d.PS.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
       <Filter>ImGui</Filter>
     </ClInclude>
@@ -101,6 +97,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="VertexShader.hlsli" />
-    <None Include="Object3d.hlsli" />
+    <None Include="resource\shadar\Object3d.hlsli" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="resource\shadar\Object3d.PS.hlsl" />
+    <FxCompile Include="resource\shadar\Object3d.VS.hlsl" />
   </ItemGroup>
 </Project>
