@@ -572,6 +572,7 @@ struct ModelData {
 	std::vector<VertexData> vertices;
 };
 
+
 ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 	ModelData modelData;
 
