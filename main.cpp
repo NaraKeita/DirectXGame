@@ -34,6 +34,7 @@ std::wstring ConvertString(const std::string& str) {
 	std::wstring result(sizeNeeded, 0);
 	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
 	return result;
+
 }
 
 std::string ConvertString(const std::wstring& str) {
