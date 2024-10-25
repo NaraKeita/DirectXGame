@@ -855,7 +855,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region DirectX初期化処理
 
 	//DirectInputの初期化
-	IDirectInput8* directInput8Create(
+	IDirectInput8* directInput = nullptr; 
+	LRESULT result = DirectInput8Create(
 		wc.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(result));
 
@@ -1464,6 +1465,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
 
+	// 全キーの入力状態を取得する
+	BYTE key[256] = {};
+	BYTE prekey[256] = {};
+
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
@@ -1505,6 +1510,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//ImGui::ShowDemoWindow();
 			//ImGui::Begin("Settings");
 			//ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
+
+			//-------------入力デバイス追加-----------------//
+
+			
+			
+			for (int i = 0; i < 256; i++) {
+				prekey[i] = key[i];
+			}
+			// キーボード情報の取得開始
+			keyboard->Acquire();
+			keyboard->GetDeviceState(sizeof(key), key);
+			//数字の0キーを押されていたら
+			if (key[DIK_0] && prekey[DIK_0] == 0) {
+				OutputDebugStringA("Hit 0\n");//出力ウィンドウに[Hit 0]と表示
+			}
+
+
+
+			//--------------------------------------------//
 
 			// ここにテキストを入れられる
 			ImGui::Text("ImGuiText");
