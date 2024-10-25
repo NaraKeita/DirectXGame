@@ -13,6 +13,7 @@
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
+#include "Input.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -851,30 +852,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 #endif
+	Input* input_ = nullptr;
+	input_ = new Input();
+	input_->Initialize(wc.hInstance, hwnd);
+	delete input_;
 
-#pragma region DirectX初期化処理
-
-	//DirectInputの初期化
-	IDirectInput8* directInput = nullptr; 
-	LRESULT result = DirectInput8Create(
-		wc.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
-	assert(SUCCEEDED(result));
-
-	//キーボードデバイスの生成
-	IDirectInputDevice8* keyboard = nullptr;
-	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-	assert(SUCCEEDED(result));
-
-	//入力データ形式のセット
-	result = keyboard->SetDataFormat(&c_dfDIKeyboard);//標準形式
-	assert(SUCCEEDED(result));
-
-	//排他制御レベルのセット
-	result = keyboard->SetCooperativeLevel(
-		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-	assert(SUCCEEDED(result));
-
-#pragma endregion
+//#pragma region DirectX初期化処理
+//
+//	//DirectInputの初期化
+//	IDirectInput8* directInput = nullptr; 
+//	LRESULT result = DirectInput8Create(
+//		wc.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+//	assert(SUCCEEDED(result));
+//
+//	//キーボードデバイスの生成
+//	IDirectInputDevice8* keyboard = nullptr;
+//	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+//	assert(SUCCEEDED(result));
+//
+//	//入力データ形式のセット
+//	result = keyboard->SetDataFormat(&c_dfDIKeyboard);//標準形式
+//	assert(SUCCEEDED(result));
+//
+//	//排他制御レベルのセット
+//	result = keyboard->SetCooperativeLevel(
+//		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+//	assert(SUCCEEDED(result));
+//
+//#pragma endregion
 
 
 #pragma region Factoryの生成
@@ -1065,7 +1070,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
 	ID3D12DescriptorHeap* dsvDescriptorHeap = CreateDescriptorHeap(device, D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
-	// DSV生成
+	// DSV生成WIN
 	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc{};
 	dscDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dscDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
@@ -1465,9 +1470,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
 
-	// 全キーの入力状態を取得する
-	BYTE key[256] = {};
-	BYTE prekey[256] = {};
+	
 
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
@@ -1515,16 +1518,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			
 			
-			for (int i = 0; i < 256; i++) {
-				prekey[i] = key[i];
-			}
-			// キーボード情報の取得開始
-			keyboard->Acquire();
-			keyboard->GetDeviceState(sizeof(key), key);
-			//数字の0キーを押されていたら
-			if (key[DIK_0] && prekey[DIK_0] == 0) {
-				OutputDebugStringA("Hit 0\n");//出力ウィンドウに[Hit 0]と表示
-			}
+			//for (int i = 0; i < 256; i++) {
+			//	prekey[i] = key[i];
+			//}
+			//// キーボード情報の取得開始
+			//keyboard->Acquire();
+			//keyboard->GetDeviceState(sizeof(key), key);
+			////数字の0キーを押されていたら
+			//if (key[DIK_0] && prekey[DIK_0] == 0) {
+			//	OutputDebugStringA("Hit 0\n");//出力ウィンドウに[Hit 0]と表示
+			//}
 
 
 
