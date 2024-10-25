@@ -49,6 +49,8 @@
   <ItemGroup>
     <FxCompile Include="Object3d.VS.hlsl" />
     <FxCompile Include="Object3d.PS.hlsl" />
+    <FxCompile Include="Particles.PS.hlsl" />
+    <FxCompile Include="Particles.VS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -102,5 +104,6 @@
   <ItemGroup>
     <None Include="VertexShader.hlsli" />
     <None Include="Object3d.hlsli" />
+    <None Include="Particles.hlsli" />
   </ItemGroup>
 </Project>
