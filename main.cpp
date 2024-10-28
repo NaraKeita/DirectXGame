@@ -1456,6 +1456,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	float* inputDirectionLight[3] = {&directionalLightSphereData->direction.x, &directionalLightSphereData->direction.y, &directionalLightSphereData->direction.z};
 	float* intensity = &directionalLightSphereData->intensity;
 
+	float trrigerCheck = 1.0f;
+
 	// ImGui初期化
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -1535,17 +1537,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 
 			//動き確認用
-			if (input->PusuKey(DIK_A) || input->PusuKey(DIK_LEFT)) {
+			if (input->PusuKey(DIK_LEFT)) {
 				transformSphere.translate.x -= 0.01f;
 			}
-			if (input->PusuKey(DIK_D) || input->PusuKey(DIK_RIGHT)) {
+			if (input->PusuKey(DIK_RIGHT)) {
 				transformSphere.translate.x += 0.01f;
 			}
-			if (input->PusuKey(DIK_W) || input->PusuKey(DIK_UP)) {
+			if (input->PusuKey(DIK_UP)) {
 				transformSphere.translate.y += 0.01f;
 			}
-			if (input->PusuKey(DIK_S) || input->PusuKey(DIK_DOWN)) {
+			if (input->PusuKey(DIK_DOWN)) {
 				transformSphere.translate.y -= 0.01f;
+			}
+
+			
+			if (input->TriggerKey(DIK_SPACE)) {
+				trrigerCheck *= -1.0f;
+				transformSphere.translate.x += trrigerCheck;
+			
 			}
 
 			//--------------------------------------------//
