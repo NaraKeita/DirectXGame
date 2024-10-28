@@ -1,8 +1,6 @@
 #include "Input.h"
 #include <cassert>
 
-
-
 void Input::Initialize(HINSTANCE hInstance, HWND hwnd) {
 	
 	LRESULT result = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
@@ -19,5 +17,13 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd) {
 }
 
 void Input::Update() {
+	//---------2_2_input更新-----------//
+	
+	//キーボード情報の取得開始
+	keyboard->Acquire();
+	//全キーの入力情報を取得する
+	BYTE key[256] = {};
+	keyboard->GetDeviceState(sizeof(key), key);
 
+	//-----------------------------------//
 }

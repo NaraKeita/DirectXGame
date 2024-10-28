@@ -840,6 +840,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
 	ShowWindow(hwnd, SW_SHOW);
 
+	//入力の更新
+	//input->Update();
+
 #pragma endregion
 
 #ifdef _DEBUG
