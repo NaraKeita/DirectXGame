@@ -18,12 +18,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#define DIRECTINPUT_VERSION 0x0800   //DirectInputのバージョン指定
-#include <dinput.h>
-
-#pragma comment(lib, "dinput8.lib")
-#pragma comment(lib, "dxguid.lib")
-
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -1537,16 +1531,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 
 			//動き確認用
-			if (input->PusuKey(DIK_LEFT)) {
+			if (input->PusuKey(DIK_LEFT) || input->PusuKey(DIK_A)) {
 				transformSphere.translate.x -= 0.01f;
 			}
-			if (input->PusuKey(DIK_RIGHT)) {
+			if (input->PusuKey(DIK_RIGHT) || input->PusuKey(DIK_D)) {
 				transformSphere.translate.x += 0.01f;
 			}
-			if (input->PusuKey(DIK_UP)) {
+			if (input->PusuKey(DIK_UP) || input->PusuKey(DIK_W)) {
 				transformSphere.translate.y += 0.01f;
 			}
-			if (input->PusuKey(DIK_DOWN)) {
+			if (input->PusuKey(DIK_DOWN) || input->PusuKey(DIK_S)) {
 				transformSphere.translate.y -= 0.01f;
 			}
 
