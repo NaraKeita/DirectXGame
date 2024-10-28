@@ -855,7 +855,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Input* input_ = nullptr;
 	input_ = new Input();
 	input_->Initialize(wc.hInstance, hwnd);
-	delete input_;
+	
 
 //#pragma region DirectX初期化処理
 //
@@ -1653,6 +1653,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			assert(SUCCEEDED(hr));
 		}
 	}
+	delete input_;
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();

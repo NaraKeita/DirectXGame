@@ -8,9 +8,6 @@
 
 #include <Windows.h>
 
-#pragma comment(lib, "dinput8.lib")
-#pragma comment(lib, "dxguid.lib")
-
 #include <wrl.h>
 using namespace Microsoft::WRL;
 
@@ -20,10 +17,12 @@ public:
 	void Initialize(HINSTANCE hInstance,HWND hwnd);
 	void Update();
 
-private:
 	// 全キーの入力状態を取得する
 	BYTE key[256] = {};
 	BYTE prekey[256] = {};
+
+private:
+	
 
 	// DirectInputのインスタンス生成
 	ComPtr<IDirectInput8> directInput = nullptr;
