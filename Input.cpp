@@ -21,7 +21,7 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd) {
 
 void Input::Update() {
 	//---------2_2_input更新-----------//
-	HRESULT result;
+	
 
 	//-----------------2_3_固有の処理編----------------//
 	//前回のキー入力を保存

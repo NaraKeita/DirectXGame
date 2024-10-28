@@ -10,7 +10,7 @@
 
 
 #include <wrl.h>
-using namespace Microsoft::WRL;
+
 
 class Input {
 public:
