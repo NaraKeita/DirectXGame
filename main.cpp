@@ -857,7 +857,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Input* input = nullptr;
 	input = new Input();
 	input->Initialize(wc.hInstance, hwnd);
-	delete input;
+	
 
 //#pragma region DirectX初期化処理
 //
@@ -1534,6 +1534,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				OutputDebugStringA("Hit 0\n");//出力ウィンドウに[Hit 0]と表示
 			}
 
+			//動き確認用
+			if (input->PusuKey(DIK_A) || input->PusuKey(DIK_LEFT)) {
+				transformSphere.translate.x -= 0.01f;
+			}
+			if (input->PusuKey(DIK_D) || input->PusuKey(DIK_RIGHT)) {
+				transformSphere.translate.x += 0.01f;
+			}
+			if (input->PusuKey(DIK_W) || input->PusuKey(DIK_UP)) {
+				transformSphere.translate.y += 0.01f;
+			}
+			if (input->PusuKey(DIK_S) || input->PusuKey(DIK_DOWN)) {
+				transformSphere.translate.y -= 0.01f;
+			}
+
 			//--------------------------------------------//
 
 			// ここにテキストを入れられる
@@ -1656,6 +1670,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			assert(SUCCEEDED(hr));
 		}
 	}
+	delete input;
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
