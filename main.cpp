@@ -840,9 +840,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
 	ShowWindow(hwnd, SW_SHOW);
 
-	//入力の更新
-	//input->Update();
-
+	
+	      
 #pragma endregion
 
 #ifdef _DEBUG
@@ -855,10 +854,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 
 #endif
-	Input* input_ = nullptr;
-	input_ = new Input();
-	input_->Initialize(wc.hInstance, hwnd);
-	delete input_;
+	Input* input = nullptr;
+	input = new Input();
+	input->Initialize(wc.hInstance, hwnd);
+	delete input;
 
 //#pragma region DirectX初期化処理
 //
@@ -1487,6 +1486,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
 
+			// 入力の更新
+			input->Update();
+
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 			Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -1527,12 +1529,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//// キーボード情報の取得開始
 			//keyboard->Acquire();
 			//keyboard->GetDeviceState(sizeof(key), key);
-			////数字の0キーを押されていたら
-			//if (key[DIK_0] && prekey[DIK_0] == 0) {
-			//	OutputDebugStringA("Hit 0\n");//出力ウィンドウに[Hit 0]と表示
-			//}
-
-
+			//数字の0キーを押されていたら
+			if (input->TriggerKey(DIK_0)) {
+				OutputDebugStringA("Hit 0\n");//出力ウィンドウに[Hit 0]と表示
+			}
 
 			//--------------------------------------------//
 
