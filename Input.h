@@ -18,9 +18,7 @@ public:
 	void Initialize(HINSTANCE hInstance,HWND hwnd);
 	void Update();
 
-	// 全キーの入力状態を取得する
-	BYTE key[256] = {};
-	BYTE prekey[256] = {};
+	
 
 	//-----------------2_3_固有の処理編-----------------//
 	bool PusuKey(BYTE keyNumber);
@@ -28,6 +26,10 @@ public:
 	//-----------------------------------------------//
 
 private:
+
+	// 全キーの入力状態を取得する
+	BYTE key[256] = {};
+	BYTE prekey[256] = {};
 	
 	// DirectInputのインスタンス生成
 	ComPtr<IDirectInput8> directInput = nullptr;
