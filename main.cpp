@@ -220,6 +220,11 @@ struct Transform {
 	Vector3 translate;
 };
 
+struct Particle {
+	Transform transform;
+	Vector3 velocity;
+};
+
 #pragma region Affine
 
 Matrix4x4 Multiply(Matrix4x4 m1, Matrix4x4 m2) {
@@ -1351,13 +1356,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	device->CreateShaderResourceView(instancingResource.Get(), &instancingSrvDesc, instancingSrvHandleCPU);
 
 	//Transformの作成
-	Transform transforms[kNumInstance];
+	Particle particles[kNumInstance];
 	for (uint32_t index = 0; index < kNumInstance; ++index) {
-		transforms[index].scale = {1.0f, 1.0f, 1.0f};
+		/*transforms[index].scale = {1.0f, 1.0f, 1.0f};
 		transforms[index].rotate = {0.0f, 0.0f, 0.0f};
-		transforms[index].translate = {index * 0.1f, index * 0.1f, index * 0.1f};
+		transforms[index].translate = {index * 0.1f, index * 0.1f, index * 0.1f};*/
+		particles[index].velocity = {0.0f, 1.0f, 0.0f};
 	}
-
+	//△tを定義。とりあえず60fps固定してあるが、実時間を計測して可変fpsで動かせるようにしておくとなおよい
+	const float kDeltaTime = 1.0f / 60.0f;
 
 	//------------------------------------------------//
 
