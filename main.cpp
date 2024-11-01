@@ -1615,6 +1615,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//instancing用のDataを読むためにStructuredBufferのSRVを設定する
 			commandList->SetGraphicsRootDescriptorTable(1, instancingSrvHandleGPU);
 
+
 			if (textureChange == 0) {
 				commandList->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 			} else {
