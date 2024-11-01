@@ -1353,7 +1353,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//Transformの作成
 	Transform transforms[kNumInstance];
 	for (uint32_t index = 0; index < kNumInstance; ++index) {
-		transforms[index].scale = {1.0f, 0.0f, 1.0f};
+		transforms[index].scale = {1.0f, 1.0f, 1.0f};
 		transforms[index].rotate = {0.0f, 0.0f, 0.0f};
 		transforms[index].translate = {index * 0.1f, index * 0.1f, index * 0.1f};
 	}
