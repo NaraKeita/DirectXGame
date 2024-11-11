@@ -1767,6 +1767,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//dsvDescriptorHeap2->Release();
 	CloseWindow(hwnd);
 
+
 	//// リソースリークチェック
 	//IDXGIDebug1* debug;
 	//if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
