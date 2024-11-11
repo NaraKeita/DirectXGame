@@ -1,4 +1,7 @@
 #pragma once
+
+
+
 class WinApp {
 public:
 	//初期化
