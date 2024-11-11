@@ -14,6 +14,7 @@
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
 #include "Input.h"
+#include "WinApp.h"
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -823,35 +824,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 	};
 
-	CoInitializeEx(0, COINIT_MULTITHREADED);
-
-#pragma region Windouの生成
-	WNDCLASS wc{};
-
-	// ウィンドウプロシージャ
-	wc.lpfnWndProc = WindowProc;
-	// ウィンドウクラス名
-	wc.lpszClassName = L"C62WindowClass";
-	// インスタンスハンドル
-	wc.hInstance = GetModuleHandle(nullptr);
-	// カーソル
-	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-
-	// ウィンドウクラスの登録
-	RegisterClass(&wc);
-
-	// クライアント領域のサイズ　横　縦
-	const int32_t kClientWidth = 1280;
-	const int32_t kClientHeight = 720;
-	// 　ウィンドウサイズを表す構造体にクライアント領域を入れる
-	RECT wrc = {0, 0, kClientWidth, kClientHeight};
-
-	// クライアント領域をもとに実際のサイズにwrcを変更してもらう
-	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-
 	
-	HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
-	ShowWindow(hwnd, SW_SHOW);
+#pragma region Windouの生成
+	
+	
+	/*HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
+	ShowWindow(hwnd, SW_SHOW);*/
 
 #pragma endregion
 
@@ -869,6 +847,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	input = new Input();
 	input->Initialize(wc.hInstance, hwnd);
 	
+	// ポインタ
+	WinApp* winApp = nullptr;
+	// WindowsAPIの初期化
+	winApp = new WinApp();
+	winApp->Initialize();
 
 //#pragma region DirectX初期化処理
 //
@@ -1719,6 +1702,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 	}
 	delete input;
+	delete winApp;
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
