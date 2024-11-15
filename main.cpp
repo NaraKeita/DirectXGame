@@ -1,6 +1,6 @@
 #include <Windows.h>
 #include <cassert>
-#include <cstdint>
+//#include <cstdint>
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <format>
@@ -15,6 +15,7 @@
 #include "externals/imgui/imgui_impl_win32.h"
 #include "Input.h"
 #include "WinApp.h"
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -852,6 +853,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// WindowsAPIの初期化
 	winApp = new WinApp();
 	winApp->Initialize();
+
+	//WindowsAPIの開放
+	delete winApp;
 
 //#pragma region DirectX初期化処理
 //
