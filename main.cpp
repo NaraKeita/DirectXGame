@@ -14,6 +14,7 @@
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
+#include <random>
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -50,6 +51,16 @@ std::string ConvertString(const std::wstring& str) {
 	WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), result.data(), sizeNeeded, NULL, NULL);
 	return result;
 }
+
+//乱数生成器の初期化
+std::random_device seedGenerator;
+std::mt19937 randomEngine(seedGenerator());
+
+//一様分布生成器を使って乱数を生成
+std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+//位置と速度を[-1,1]でランダムに初期化
+partial[index].transform.transration
+
 
 void log(const std::string& message) { OutputDebugStringA(message.c_str()); }
 
@@ -1357,7 +1368,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//Transformの作成
 	Particle particles[kNumInstance];
-	for (uint32_t index = 0; index < kNumInstance; ++index) {
+	for (uint32_t index = 0; index < kNumInstance; ++index) {a
 		/*transforms[index].scale = {1.0f, 1.0f, 1.0f};
 		transforms[index].rotate = {0.0f, 0.0f, 0.0f};
 		transforms[index].translate = {index * 0.1f, index * 0.1f, index * 0.1f};*/
