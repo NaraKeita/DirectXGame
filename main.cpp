@@ -52,14 +52,7 @@ std::string ConvertString(const std::wstring& str) {
 	return result;
 }
 
-//乱数生成器の初期化
-std::random_device seedGenerator;
-std::mt19937 randomEngine(seedGenerator());
 
-//一様分布生成器を使って乱数を生成
-std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-//位置と速度を[-1,1]でランダムに初期化
-partial[index].transform.transration
 
 
 void log(const std::string& message) { OutputDebugStringA(message.c_str()); }
@@ -234,7 +227,14 @@ struct Transform {
 struct Particle {
 	Transform transform;
 	Vector3 velocity;
+	Vector4 color;
 };
+
+//struct ParticleForGPU {
+//	float32_t4x4 WVP;
+//	float32_t4x4 World;
+//	float32_t4x4 color;
+//};
 
 #pragma region Affine
 
@@ -874,6 +874,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	log("Hello,DirectX\n");
 
+	// 乱数生成器の初期化
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine(seedGenerator());
+
+
+
+
 #pragma endregion
 
 #pragma region アダプタの作成
@@ -1349,6 +1356,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
 	// 単位行列を書き込んでおく
 	for (uint32_t index = 0; index < kNumInstance; ++index) {
+
 		instancingData[index].WVP = MakeIdentity4x4();
 		instancingData[index].World = MakeIdentity4x4();
 	}
@@ -1368,14 +1376,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//Transformの作成
 	Particle particles[kNumInstance];
-	for (uint32_t index = 0; index < kNumInstance; ++index) {a
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
 		/*transforms[index].scale = {1.0f, 1.0f, 1.0f};
 		transforms[index].rotate = {0.0f, 0.0f, 0.0f};
 		transforms[index].translate = {index * 0.1f, index * 0.1f, index * 0.1f};*/
 		particles[index].velocity = {0.0f, 1.0f, 0.0f};
+		// 一様分布生成器を使って乱数を生成
+		std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+		// 位置と速度を[-1,1]でランダムに初期化
+		particles[index].transform.translate = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
+		particles[index].velocity = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
 	}
+
+	
+
+
+
 	//△tを定義。とりあえず60fps固定してあるが、実時間を計測して可変fpsで動かせるようにしておくとなおよい
 	const float kDeltaTime = 1.0f / 60.0f;
+
+	
 
 	//------------------------------------------------//
 
@@ -1473,6 +1493,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         {0.0f, 0.0f, 0.0f}
     };
 
+
 	Transform transformL{
 	    {1.0f, 1.0f, 1.0f},
         {0.0f, 0.0f, 0.0f},
@@ -1538,9 +1559,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//*wvpDate = WorldViewProjectionMatrix;
 			wvpDateSphere->WVP = WorldViewProjectionMatrixSphere;
 
+			// 11/15_追加
+			/*Particle MakeNewParticle(std::mt19937& randomEngine) {
+				std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+				Particle particle;
+				particle.transform.scale = {1.0f, 1.0f, 1.0f};
+				particle.transform.rotate = {0.0f, 0.0f, 0.0f};
+				particle.transform.translate = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
+				particle.transform.velecity = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
+
+				std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+				particle.color = {distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f};
+
+				return particle;
+			}*/
+
+			/*for (uint32_t index = 0; index < kNumInstance; ++index) {
+				particle[index] = MakeNewParticle(randomEngine);
+			}*/
+
 			//instancing
 			for (uint32_t index = 0; index < kNumInstance; ++index) {
-				Matrix4x4 worldMatrix = MakeAffineMatrix(transforms[index].scale, transforms[index].rotate, transforms[index].translate);
+				Matrix4x4 worldMatrix = MakeAffineMatrix(particles[index].transform.scale, particles[index].transform.rotate, particles[index].transform.translate);
 				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 				instancingData[index].WVP = worldViewProjectionMatrix;
 				instancingData[index].World = worldMatrix;
