@@ -3,6 +3,7 @@
 void WinApp::Initialize() {
 	CoInitializeEx(0, COINIT_MULTITHREADED);
 
+
 	WNDCLASS wc{};
 
 	// ウィンドウプロシージャ
