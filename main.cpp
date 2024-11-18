@@ -1711,17 +1711,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	
 	delete input;
 
-	// WindowsAPIの終了処理
-	winApp->Finalize();
-
-	// WindowsAPIの開放
-	delete winApp;
-	winApp = nullptr;
-
+	
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-	
+	CloseHandle(fenceEvent);
 	fence->Release();
 	//rtvDescriptorHeap->Release();
 	//srvDescriptorHeap->Release();
@@ -1774,6 +1768,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//	debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
 	//	debug->Release();
 	//}
-	CloseHandle(fenceEvent);
+	
+	// WindowsAPIの終了処理
+	winApp->Finalize();
+
+	// WindowsAPIの開放
+	delete winApp;
+	winApp = nullptr;
+
+
 	return 0;
 }
