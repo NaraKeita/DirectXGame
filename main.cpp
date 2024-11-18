@@ -1506,6 +1506,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
+
 		
 			// ゲームの処理
 			ImGui_ImplDX12_NewFrame();
