@@ -23,10 +23,8 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 }
 
 void WinApp::Initialize() {
-	
 
 	CoInitializeEx(0, COINIT_MULTITHREADED);
-
 
 	//WNDCLASS wc{};
 
@@ -68,4 +66,9 @@ void WinApp::Initialize() {
 
 void WinApp::Update() {
 
+}
+
+void WinApp::Finalize() { 
+	CloseWindow(hwnd);
+	CoUninitialize();
 }

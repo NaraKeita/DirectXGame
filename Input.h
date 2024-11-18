@@ -1,4 +1,5 @@
 #pragma once
+#include "WinApp.h"
 //template<typename T> class ComPtr;
 
 // template<class U> friend class ComPtr;
@@ -15,15 +16,12 @@
 class Input {
 public:
 	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
-	void Initialize(HINSTANCE hInstance,HWND hwnd);
+	void Initialize(WinApp* winApp);
 	void Update();
 
-	
-
-	//-----------------2_3_固有の処理編-----------------//
 	bool PusuKey(BYTE keyNumber);
 	bool TriggerKey(BYTE keyNumber);
-	//-----------------------------------------------//
+	
 
 private:
 
@@ -37,6 +35,7 @@ private:
 	// キーボードデバイス生成
 	ComPtr<IDirectInputDevice8> keyboard;
 
-	
+	//WindowsAPI
+	WinApp* winApp_ = nullptr;
 
 };

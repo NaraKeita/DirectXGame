@@ -853,10 +853,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	Input* input = nullptr;
 	input = new Input();
-	input->Initialize(winApp->GetHInstance(), winApp->GetHwnd());
+	input->Initialize(winApp);
 
 	
-
 ;
 
 //#pragma region DirectX初期化処理
@@ -1707,10 +1706,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			assert(SUCCEEDED(hr));
 		}
 	}
+	
+	delete input;
+
+	// WindowsAPIの終了処理
+	winApp->Finalize();
+
 	// WindowsAPIの開放
 	delete winApp;
-	delete input;
-	
+	winApp = nullptr;
+
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
