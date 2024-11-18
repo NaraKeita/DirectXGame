@@ -1506,10 +1506,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
-		if (winApp->ProcessMessage()) {
-			//ゲームループを抜ける
-			break;
-		} else {
+		
 			// ゲームの処理
 			ImGui_ImplDX12_NewFrame();
 			ImGui_ImplWin32_NewFrame();
@@ -1704,7 +1701,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			assert(SUCCEEDED(hr));
 			hr = commandList->Reset(commandAllocator.Get(), nullptr);
 			assert(SUCCEEDED(hr));
-		}
+		
 	}
 	
 	delete input;
@@ -1719,7 +1716,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-	CloseHandle(fenceEvent);
+	
 	fence->Release();
 	//rtvDescriptorHeap->Release();
 	//srvDescriptorHeap->Release();
@@ -1762,7 +1759,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//textureResource2->Release();
 	//depthStencilResource2->Release();
 	//dsvDescriptorHeap2->Release();
-	CloseWindow(winApp->GetHwnd());
+	
 
 	//// リソースリークチェック
 	//IDXGIDebug1* debug;
@@ -1772,6 +1769,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//	debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
 	//	debug->Release();
 	//}
-	CoUninitialize();
+	CloseHandle(fenceEvent);
 	return 0;
 }
