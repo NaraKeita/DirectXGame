@@ -15,6 +15,7 @@
 #include "externals/imgui/imgui_impl_win32.h"
 #include "Input.h"
 #include "WinApp.h"
+#include "DirectXCommon.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #define _USE_MATH_DEFINES
@@ -849,7 +850,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// WindowsAPIの初期化
 	winApp = new WinApp();
 	winApp->Initialize();
-
+	//ポインタ
+	DirectXCommon* dxCommon = nullptr;
+	//DirectXの初期化
+	dxCommon = new DirectXCommon();
+	dxCommon->Initialize();
 
 	Input* input = nullptr;
 	input = new Input();
@@ -1775,6 +1780,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// WindowsAPIの開放
 	delete winApp;
 	winApp = nullptr;
+	delete dxCommon;
 
 	return 0;
 }
