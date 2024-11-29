@@ -1,7 +1,9 @@
-#pragma once
+//#pragma once
+//#include "DirectXCommon.h"
+
 
 namespace Logger {
-void log(const std::string& message);
+   void log(const std::string& message);
 }
 
 
