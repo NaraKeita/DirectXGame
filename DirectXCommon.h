@@ -31,8 +31,10 @@ private:
 	void ImGuiInitialize();
 
 private:
+	//Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
+
 	//DirectX12デバイス
-	Microsoft::WRL::ComPtr<ID3D12Device> device;
+	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 	//DXGIファクトリ
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;
 	//WindowsAPI
@@ -46,10 +48,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 	// 深度バッファの生成
 	ID3D12Resource* zBuffer = nullptr;
-	// 各種デスクリプタヒープの生成
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
-
+	
 	// フェンスの初期化
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
 	

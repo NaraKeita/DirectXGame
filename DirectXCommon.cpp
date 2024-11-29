@@ -320,6 +320,9 @@ void DirectXCommon::SwapChainInitialize() {
 void DirectXCommon::DescriptorHeapInitialize() {
 	ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device * device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDesciptors, bool shaderVisible) {
 		// ディスクリプターヒープの生成
+		// 各種デスクリプタヒープの生成
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
 
 		ID3D12DescriptorHeap* descriptorHeap = nullptr;
 		D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
