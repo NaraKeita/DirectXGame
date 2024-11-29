@@ -2,6 +2,7 @@
 #include <cassert>
 #include "Logger.h"
 #include <format>
+#include "StringUtility.h"
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 
@@ -70,7 +71,7 @@ void DirectXCommon::Initialize() {
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 	    srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
-	D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_12_2, D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_0};
+	/*D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_12_2, D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_0};
 	const char* featureLevelStrings[] = {"12.2", "12.1", "12,0"};
 
 	for (size_t i = 0; i < _countof(featureLevels); ++i) {
@@ -79,7 +80,7 @@ void DirectXCommon::Initialize() {
 			log(std::format("FEatureLevel : {}\n", featureLevelStrings[i]));InitializeDevice
 			break;
 		}
-	}
+	}*/
 
 	assert(device != nullptr);
 	log("Complete create D3D12Device!!!\n");
