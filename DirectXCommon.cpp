@@ -23,6 +23,21 @@ std::wstring ConvertString(const std::string& str) {
 	return result;
 }
 
+std::string ConvertString(const std::wstring& str) {
+	if (str.empty()) {
+		return std::string();
+	}
+
+	auto sizeNeeded = WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), NULL, 0, NULL, NULL);
+	if (sizeNeeded == 0) {
+		return std::string();
+	}
+	std::string result(sizeNeeded, 0);
+	WideCharToMultiByte(CP_UTF8, 0, str.data(), static_cast<int>(str.size()), result.data(), sizeNeeded, NULL, NULL);
+	return result;
+}
+
+
 void DirectXCommon::Initialize() {
 	// NULL検出
 	assert(winApp);
@@ -188,8 +203,8 @@ void DirectXCommon::DeviceInitialize() {
 //コマンド関連の初期化
 void DirectXCommon::CommandInitialize() {
 #pragma region コマンドアロケータ
+	HRESULT hr;
 	// コマンドアロケータ生成
-
 	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
 	// 生成できない場合
 	assert(SUCCEEDED(hr));
@@ -219,9 +234,8 @@ void DirectXCommon::CommandInitialize() {
 
 void DirectXCommon::SwapChainInitialize() {
 #pragma region Swap Chainの生成
+	HRESULT hr;
 	// スワップチェイン生成
-	
-
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	swapChainDesc.Width = WinApp::kClientWidth;
 	swapChainDesc.Height = WinApp::kClientHeight;
