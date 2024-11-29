@@ -52,9 +52,6 @@ std::string ConvertString(const std::wstring& str) {
 	return result;
 }
 
-
-
-
 void log(const std::string& message) { OutputDebugStringA(message.c_str()); }
 
 // ComplierShader関数
@@ -114,6 +111,25 @@ struct Vector3 {
 	float y;
 	float z;
 };
+
+Vector3& operator+=(Vector3& lhv, const Vector3& rhv) {
+	lhv.x += rhv.x;
+	lhv.y += rhv.y;
+	lhv.z += rhv.z;
+	return lhv;
+}
+
+Vector3& operator*=(Vector3& v, float s) {
+	v.x *= s;
+	v.y *= s;
+	v.z *= s;
+	return v;
+}
+
+const Vector3 operator*(const Vector3& v, float s) {
+	Vector3 temp(v);
+	return temp *= s;
+}
 
 struct Vector4 {
 	float x;
@@ -222,6 +238,7 @@ struct Transform {
 	Vector3 scale;
 	Vector3 rotate;
 	Vector3 translate;
+	Vector3 velocity;
 };
 
 struct Particle {
@@ -230,13 +247,22 @@ struct Particle {
 	Vector4 color;
 };
 
-//struct ParticleForGPU {
-//	float32_t4x4 WVP;
-//	float32_t4x4 World;
-//	float32_t4x4 color;
-//};
 
 #pragma region Affine
+
+Particle MakeNewParticle(std::mt19937& randomEngine) {
+	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	Particle particle;
+	particle.transform.scale = {1.0f, 1.0f, 1.0f};
+	particle.transform.rotate = {0.0f, 0.0f, 0.0f};
+	particle.transform.translate = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
+	particle.transform.velocity = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
+
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+	particle.color = {distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f};
+
+	return particle;
+}
 
 Matrix4x4 Multiply(Matrix4x4 m1, Matrix4x4 m2) {
 	Matrix4x4 result{};
@@ -495,6 +521,12 @@ struct Material {
 struct TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
+};
+
+struct ParticleForGPU {
+	Matrix4x4 WVP;
+	Matrix4x4 World;
+	Vector4 Color;
 };
 
 struct DirectionalLight {
@@ -848,6 +880,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
 	ShowWindow(hwnd, SW_SHOW);
+
 
 #pragma endregion
 
@@ -1295,6 +1328,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexBufferViewSphere.SizeInBytes = sizeof(VertexData) * SphereVertexNum;
 	vertexBufferViewSphere.StrideInBytes = sizeof(VertexData);
 	ID3D12Resource* wvpResourceSphere = CreateBufferResource(device, sizeof(TransformationMatrix));
+	ID3D12Resource* wvpResourceSphere = CreateBufferResource(device, sizeof(ParticleForGPU));
+
 	TransformationMatrix* wvpDateSphere = nullptr;
 	wvpResourceSphere->Map(0, nullptr, reinterpret_cast<void**>(&wvpDateSphere));
 	wvpDateSphere->World = MakeIdentity4x4();
@@ -1351,12 +1386,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	const uint32_t kNumInstance = 10; // インスタンス数
 	// Instance用のTransformationMatrixリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource = CreateBufferResource(device, sizeof(TransformationMatrix) * kNumInstance);
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource = CreateBufferResource(device, sizeof(ParticleForGPU) * kNumInstance);
 	// 書き込むためのアドレスを取得
 	TransformationMatrix* instancingData = nullptr;
+	ParticleForGPU* instancingData = nullptr;
 	instancingResource->Map(0, nullptr, reinterpret_cast<void**>(&instancingData));
 	// 単位行列を書き込んでおく
 	for (uint32_t index = 0; index < kNumInstance; ++index) {
-
 		instancingData[index].WVP = MakeIdentity4x4();
 		instancingData[index].World = MakeIdentity4x4();
 	}
@@ -1386,15 +1423,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 位置と速度を[-1,1]でランダムに初期化
 		particles[index].transform.translate = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
 		particles[index].velocity = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
+
+	}
+
+	
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
+		particles[index] = MakeNewParticle(randomEngine);
 	}
 
 	
 
-
-
 	//△tを定義。とりあえず60fps固定してあるが、実時間を計測して可変fpsで動かせるようにしておくとなおよい
 	const float kDeltaTime = 1.0f / 60.0f;
 
+	
 	
 
 	//------------------------------------------------//
@@ -1560,30 +1602,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			wvpDateSphere->WVP = WorldViewProjectionMatrixSphere;
 
 			// 11/15_追加
-			/*Particle MakeNewParticle(std::mt19937& randomEngine) {
-				std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
-				Particle particle;
-				particle.transform.scale = {1.0f, 1.0f, 1.0f};
-				particle.transform.rotate = {0.0f, 0.0f, 0.0f};
-				particle.transform.translate = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
-				particle.transform.velecity = {distribution(randomEngine), distribution(randomEngine), distribution(randomEngine)};
+			
 
-				std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-				particle.color = {distColor(randomEngine), distColor(randomEngine), distColor(randomEngine), 1.0f};
-
-				return particle;
-			}*/
-
-			/*for (uint32_t index = 0; index < kNumInstance; ++index) {
-				particle[index] = MakeNewParticle(randomEngine);
-			}*/
 
 			//instancing
 			for (uint32_t index = 0; index < kNumInstance; ++index) {
+				/*bool useUpdate = false;
+	            ImGui::Checkbox("Update", &useUpdate);
+				if (useUpdate) {
+					particles[index].currentTime += kDeltaTime;
+				}*/
+				particles[index].transform.translate += particles[index].velocity * kDeltaTime;
+
 				Matrix4x4 worldMatrix = MakeAffineMatrix(particles[index].transform.scale, particles[index].transform.rotate, particles[index].transform.translate);
 				Matrix4x4 worldViewProjectionMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 				instancingData[index].WVP = worldViewProjectionMatrix;
 				instancingData[index].World = worldMatrix;
+				instancingData[index].Color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 			}
 
 			DrawSphere(vertexDataSphere);
@@ -1605,6 +1640,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//ImGui::ShowDemoWindow();
 			//ImGui::Begin("Settings");
 			//ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
+
+			
 
 			// ここにテキストを入れられる
 			ImGui::Text("ImGuiText");
