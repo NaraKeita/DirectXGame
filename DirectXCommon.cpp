@@ -9,7 +9,7 @@
 //#include <Windows.h>
 
 // #include <cstdint>
-//#include "externals/DirectXTex/DirectXTex.h"
+#include "externals/DirectXTex/DirectXTex.h"
 //#include <d3d12.h>
 #include <dxcapi.h>
 //#include <dxgi1_6.h>
@@ -112,7 +112,21 @@ IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, ID
 	return shaderBlob;
 }
 
+DirectX::ScratchImage LoadTexture(const std::string& filePath) {
+	// テクスチャファイル // byte関連
+	DirectX::ScratchImage image{};
+	// std::wstring filePathW = ConvertString(filePath);
+	// HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	assert(SUCCEEDED(hr));
 
+	// ミップマップ　//拡大縮小で使う
+	DirectX::ScratchImage mipImages{};
+	// hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	assert(SUCCEEDED(hr));
+
+	// ミップマップ付きのデータを返す
+	return mipImages;
+}
 
 void DirectXCommon::Initialize() {
 	// NULL検出
@@ -347,6 +361,11 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
 	dscDesc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dscDesc2.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+
+	// textureを読んで転送
+	DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
+	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
+	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CrateTextureResource(device.Get(), metadata2);
 
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
