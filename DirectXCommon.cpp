@@ -434,7 +434,7 @@ void DirectXCommon::RenderTargetInitialize() {
 	
 
 	//裏表の2つ分
-	for (uint32_t i = 0; i < rtvHandles[]; i++) {
+	for (uint32_t i = 0; i < 2; ++i) {
 		// BlendState
 		// D3D12_BLEND_DESC blendDesc{};
 		// blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
