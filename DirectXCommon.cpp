@@ -418,6 +418,12 @@ void DirectXCommon::RenderTargetInitialize() {
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
+	// RTV用の設定
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+
+	rtvHandles[0] = rtvStartHandle;
+
 	device->CreateRenderTargetView(swapChainResource[0].Get(), &rtvDesc, rtvHandles[0]);
 
 	//スワップチェーンからリソースを引っ張ってくる
@@ -425,11 +431,7 @@ void DirectXCommon::RenderTargetInitialize() {
 	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	device->CreateRenderTargetView(swapChainResource[1].Get(), &rtvDesc, rtvHandles[1]);
 
-	//RTV用の設定
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
-
-	rtvHandles[0] = rtvStartHandle;
+	
 
 	//裏表の2つ分
 	for (uint32_t i = 0; i < rtvHandles[]; i++) {
