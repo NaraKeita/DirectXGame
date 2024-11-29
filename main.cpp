@@ -781,10 +781,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
 	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap > dsvDescriptorHeap2 = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
-	//// SRVを作成するDescriptorHeap場所決め
-	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
-	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
-	//// 先頭ImGui
+	// 先頭ImGui
 	//textureSrvHandleCPU2.ptr += descriptorSizeSRV;
 	//textureSrvHandleGPU2.ptr += descriptorSizeSRV;
 	//
