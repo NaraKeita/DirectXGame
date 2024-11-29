@@ -477,6 +477,8 @@ void DirectXCommon::RenderTargetInitialize() {
 }
 
 void DirectXCommon::ZBufferStencilViewInitialize() {
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
+
 	// DSV生成WIN
 	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc{};
 	dscDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;

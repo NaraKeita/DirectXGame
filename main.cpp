@@ -792,7 +792,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResource = CrateTextureResource(device.Get(), metadata);
 	//
 	//UploadTextureData(textureResource.Get(), mipImages);
-	//Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 
 	//
 	//// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
