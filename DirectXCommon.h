@@ -65,8 +65,18 @@ private:
 	// スワップチェイン生成
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
 
+	// SwapchainからResourceを引っ張ってくる
+	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources[2] = {nullptr};
+
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+
 	// スワップチェーンリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
+
+	uint32_t descriptorSizeSRV;
+	uint32_t descriptorSizeRTV;
+	uint32_t descriptorSizeDSV;
 
 	// 指定番号のCPUデスクリプタハンドルを取得する
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);

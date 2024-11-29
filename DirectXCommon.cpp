@@ -230,7 +230,7 @@ void DirectXCommon::Initialize() {
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) { 
-	return GetCPUDescriptorHandle(srvDescriptorHeap, desriptorSizeSRV, index);
+	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
 }
 
 void DirectXCommon::DeviceInitialize() {
@@ -358,7 +358,6 @@ void DirectXCommon::SwapChainInitialize() {
 #pragma region Swap Chainの生成
 	HRESULT hr;
 	// スワップチェイン生成
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	swapChainDesc.Width = WinApp::kClientWidth;
 	swapChainDesc.Height = WinApp::kClientHeight;
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -389,9 +388,9 @@ void DirectXCommon::DescriptorHeapInitialize() {
 
 #pragma endregion
 
-	const uint32_t descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	const uint32_t descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	const uint32_t descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 	// DSV生成
 	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
@@ -417,15 +416,9 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
 	
-	
-
 }
 
 void DirectXCommon::RenderTargetInitialize() {
-
-	// SwapchainからResourceを引っ張ってくる
-	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource[2] = {nullptr};
-
 	HRESULT hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResource[0]));
 	assert(SUCCEEDED(hr));
 
@@ -433,7 +426,6 @@ void DirectXCommon::RenderTargetInitialize() {
 	assert(SUCCEEDED(hr));
 
 	// RTV
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
 
