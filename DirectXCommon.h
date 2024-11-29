@@ -13,9 +13,13 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 class DirectXCommon {
 public:
 	void Initialize();
-	
-	//std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
 
+	// 指定番号のCPUデスクリプタハンドルを取得する
+	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
+	// 指定番号のGPUデスクリプタハンドルを取得する
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
+
+	
 private:
 	void DeviceInitialize();              //デバイス
 	void CommandInitialize();             // コマンド関連
@@ -23,7 +27,9 @@ private:
 	void ZBufferInitialize();             // 深度バッファ
 	void DescriptorHeapInitialize();      // デスクリプタヒープ
 	void RenderTargetInitialize();        // レンダーターゲットビュー
-	void GetSRVCPUDescriptorHandle();     //
+
+	void GetSRVCPUDescriptorHandle();     //SRV専用デスクリプタハンドル取得関数
+
 	void ZBufferStencilViewInitialize();  //深度ステンシルビュー
 	void FenceInitialize();               //フェンスの生成
 	void ViewportInitialize();            //ビューポート矩形の初期化
@@ -47,20 +53,24 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 	// 深度バッファの生成
 	ID3D12Resource* zBuffer = nullptr;
-	
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 	// フェンスの初期化
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
-	
 	//デスクリプタヒープを生成する
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-	
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
 	// スワップチェイン生成
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
+
+	// スワップチェーンリソース
+	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
 
 	// 指定番号のCPUデスクリプタハンドルを取得する
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 	// 指定番号のGPUデスクリプタハンドルを取得する
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
-	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
-	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
+	
 };

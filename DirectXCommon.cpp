@@ -230,7 +230,7 @@ void DirectXCommon::Initialize() {
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) { 
-	return GetSRVCPUDescriptorHandle(srvDescriptorHeap, desriptorSizeSRV, index);
+	return GetCPUDescriptorHandle(srvDescriptorHeap, desriptorSizeSRV, index);
 }
 
 void DirectXCommon::DeviceInitialize() {
@@ -380,9 +380,12 @@ void DirectXCommon::SwapChainInitialize() {
 void DirectXCommon::DescriptorHeapInitialize() {
 
 #pragma region ディスクリプターヒープの生成
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+
+	dsvDescriptorHeap2 = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+
 
 #pragma endregion
 
@@ -447,8 +450,6 @@ void DirectXCommon::RenderTargetInitialize() {
 	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	device->CreateRenderTargetView(swapChainResource[1].Get(), &rtvDesc, rtvHandles[1]);
 
-	
-
 	//裏表の2つ分
 	for (uint32_t i = 0; i < 2; ++i) {
 		// BlendState
@@ -494,9 +495,9 @@ void DirectXCommon::RenderTargetInitialize() {
 
 void DirectXCommon::ZBufferStencilViewInitialize() {
 
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
+	depthStencilResource = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	dsvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	// DSV生成WIN
 	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc{};
@@ -507,6 +508,10 @@ void DirectXCommon::ZBufferStencilViewInitialize() {
 }
 
 void DirectXCommon::FenceInitialize() { 
+	D3D12_FENCE_FLAGS fence;
+}
+
+void DirectXCommon::ViewportInitialize() {
 	// ビューポート
 	D3D12_VIEWPORT viewport;
 
@@ -517,16 +522,10 @@ void DirectXCommon::FenceInitialize() {
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 
-	commandList->RSSetViewports(1, &viewport); 
+	commandList->RSSetViewports(1, &viewport);
 }
 
-void DirectXCommon::ViewportInitialize() {
-
-}
-
-void DirectXCommon::ScissoringInitialize() {
-
-}
+void DirectXCommon::ScissoringInitialize() { int scissoring; }
 
 void DirectXCommon::DXCCompilerInitialize() {
 	// DXC
