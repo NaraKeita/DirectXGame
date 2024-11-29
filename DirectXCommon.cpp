@@ -134,8 +134,7 @@ void DirectXCommon::Initialize() {
 	ImGuiInitialize();
 	
 	
-	// コマンドアロケータ生成
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
+	
 	// コマンドリスト生成
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
 	// スワップチェイン生成
@@ -279,6 +278,10 @@ void DirectXCommon::DeviceInitialize() {
 void DirectXCommon::CommandInitialize() {
 #pragma region コマンドアロケータ
 	HRESULT hr;
+
+	// コマンドアロケータ生成
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
+
 	// コマンドアロケータ生成
 	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
 	// 生成できない場合
