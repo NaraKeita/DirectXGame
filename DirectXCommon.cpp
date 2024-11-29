@@ -277,13 +277,11 @@ void DirectXCommon::DeviceInitialize() {
 //コマンド関連の初期化
 void DirectXCommon::CommandInitialize() {
 #pragma region コマンドアロケータ
-	HRESULT hr;
-
 	// コマンドアロケータ生成
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
 
 	// コマンドアロケータ生成
-	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	HRESULT hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
 	// 生成できない場合
 	assert(SUCCEEDED(hr));
 
