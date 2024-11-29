@@ -133,8 +133,7 @@ void DirectXCommon::Initialize() {
 	DXCCompilerInitialize();
 	ImGuiInitialize();
 	
-	// コマンドキュー生成
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
+	
 	// コマンドアロケータ生成
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
 	// コマンドリスト生成
@@ -320,6 +319,9 @@ void DirectXCommon::SwapChainInitialize() {
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 2;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+	// コマンドキュー生成
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 
 	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
 	assert(SUCCEEDED(hr));
