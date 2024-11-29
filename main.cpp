@@ -794,9 +794,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//UploadTextureData(textureResource.Get(), mipImages);
 
 	//
-	//// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
-	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-
+	
 	//// metadataを基にSRVの設定
 	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	//srvDesc.Format = metadata.format;
