@@ -6,7 +6,33 @@
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 
-using namespace Microsoft::WRL;
+//#include <Windows.h>
+
+// #include <cstdint>
+//#include "externals/DirectXTex/DirectXTex.h"
+//#include <d3d12.h>
+#include <dxcapi.h>
+//#include <dxgi1_6.h>
+//#include <dxgidebug.h>
+
+//#include <fstream>
+//#include <sstream>
+//#include <string>
+// #include "externals/imgui/imgui.h"
+// #include "externals/imgui/imgui_impl_dx12.h"
+// #include "externals/imgui/imgui_impl_win32.h"
+
+//#include "Input.h"
+//#include "WinApp.h"
+
+// extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//#define _USE_MATH_DEFINES
+//#include <math.h>
+
+//#pragma comment(lib, "dxguid.lib")
+//#pragma comment(lib, "dxcompiler.lib")
+
+//using namespace Microsoft::WRL;
 using namespace Logger;
 
 std::wstring ConvertString(const std::string& str) {
