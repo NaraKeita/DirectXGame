@@ -134,19 +134,6 @@ void DirectXCommon::Initialize() {
 	ImGuiInitialize();
 	
 	
-	
-	
-	// スワップチェイン生成
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
-	// 深度バッファの生成
-	ID3D12Resource* zBuffer = nullptr;
-	//各種デスクリプタヒープの生成
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
-
-	
-	// フェンスの初期化
-	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
 	//ImGuiの初期化
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -277,9 +264,6 @@ void DirectXCommon::DeviceInitialize() {
 void DirectXCommon::CommandInitialize() {
 #pragma region コマンドアロケータ
 	// コマンドアロケータ生成
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
-
-	// コマンドアロケータ生成
 	HRESULT hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
 	// 生成できない場合
 	assert(SUCCEEDED(hr));
@@ -288,18 +272,12 @@ void DirectXCommon::CommandInitialize() {
 
 #pragma region コマンドリスト
 	// コマンドリスト生成
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
-
-	// コマンドリスト生成
 	 hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
 	// 生成できない場合
 	 assert(SUCCEEDED(hr));
 #pragma endregion
 
 #pragma region コマンドキュー
-
-
-	 // コマンドキュー生成
 	  D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 	  hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
 	 // 生成できない場合
