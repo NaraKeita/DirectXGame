@@ -378,7 +378,7 @@ void DirectXCommon::SwapChainInitialize() {
 }
 
 void DirectXCommon::DescriptorHeapInitialize() {
-	ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device * device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDesciptors, bool shaderVisible) {
+	ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDesciptors, bool shaderVisible) {
 		// ディスクリプターヒープの生成
 		ID3D12DescriptorHeap* descriptorHeap = nullptr;
 		D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
@@ -507,6 +507,8 @@ void DirectXCommon::RenderTargetInitialize() {
 
 void DirectXCommon::ZBufferStencilViewInitialize() {
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
+	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2 = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 	// DSV生成WIN
 	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc{};
