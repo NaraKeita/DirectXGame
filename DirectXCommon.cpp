@@ -1,6 +1,7 @@
 #include "DirectXCommon.h"
 #include <cassert>
 #include "Logger.h"
+#include <format>
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 
