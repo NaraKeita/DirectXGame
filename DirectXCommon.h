@@ -66,7 +66,7 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
 
 	// SwapchainからResourceを引っ張ってくる
-	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResources[2] = {nullptr};
+	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource[2] = {nullptr};
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
