@@ -344,14 +344,7 @@ void DirectXCommon::SwapChainInitialize() {
 	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 
-	// SwapchainからResourceを引っ張ってくる
-	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource[2] = {nullptr};
-
-	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResource[0]));
-	assert(SUCCEEDED(hr));
-
-	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResource[1]));
-	assert(SUCCEEDED(hr));
+	
 #pragma endregion
 }
 
@@ -413,6 +406,16 @@ void DirectXCommon::DescriptorHeapInitialize() {
 }
 
 void DirectXCommon::RenderTargetInitialize() {
+
+	// SwapchainからResourceを引っ張ってくる
+	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource[2] = {nullptr};
+
+	HRESULT hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResource[0]));
+	assert(SUCCEEDED(hr));
+
+	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResource[1]));
+	assert(SUCCEEDED(hr));
+
 	device->CreateRenderTargetView(swapChainResource[0].Get(), &rtvDesc, rtvHandles[0]);
 
 	//スワップチェーンからリソースを引っ張ってくる
