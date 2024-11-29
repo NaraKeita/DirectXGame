@@ -135,8 +135,7 @@ void DirectXCommon::Initialize() {
 	
 	
 	
-	// コマンドリスト生成
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
+	
 	// スワップチェイン生成
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
 	// 深度バッファの生成
@@ -289,7 +288,9 @@ void DirectXCommon::CommandInitialize() {
 
 #pragma region コマンドリスト
 	// コマンドリスト生成
-	
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
+
+	// コマンドリスト生成
 	 hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
 	// 生成できない場合
 	 assert(SUCCEEDED(hr));
@@ -297,8 +298,8 @@ void DirectXCommon::CommandInitialize() {
 
 #pragma region コマンドキュー
 
+
 	 // コマンドキュー生成
-	  
 	  D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 	  hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
 	 // 生成できない場合
