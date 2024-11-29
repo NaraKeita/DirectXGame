@@ -1,3 +1,6 @@
+#include "DirectXCommon.h"
+#include <format>
+
 namespace StringUtility {
 std::wstring ConvertString(const std::string& str) {
 	if (str.empty()) {

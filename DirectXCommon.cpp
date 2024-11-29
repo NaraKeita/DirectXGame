@@ -180,6 +180,19 @@ ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t 
 	return resource;
 }
 
+ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDesciptors, bool shaderVisible) {
+	// ディスクリプターヒープの生成
+	ID3D12DescriptorHeap* descriptorHeap = nullptr;
+	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
+	descriptorHeapDesc.Type = heapType;
+	descriptorHeapDesc.NumDescriptors = numDesciptors;
+
+	descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+
+	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
+	assert(SUCCEEDED(hr));
+	return descriptorHeap;
+}
 
 void DirectXCommon::Initialize() {
 	// NULL検出
@@ -200,19 +213,6 @@ void DirectXCommon::Initialize() {
 	DXCCompilerInitialize();
 	ImGuiInitialize();
 	
-	
-	//ImGuiの初期化
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplWin32_Init(winApp->GetHwnd());
-	ImGui_ImplDX12_Init(device.Get(),
-		swapChainDesc.BufferCount,
-		rtvDesc.Format,
-		srvDescriptorHeap.Get(),
-		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-	    srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
-
 	/*D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_12_2, D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_0};
 	const char* featureLevelStrings[] = {"12.2", "12.1", "12,0"};
 
@@ -378,19 +378,6 @@ void DirectXCommon::SwapChainInitialize() {
 }
 
 void DirectXCommon::DescriptorHeapInitialize() {
-	ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDesciptors, bool shaderVisible) {
-		// ディスクリプターヒープの生成
-		ID3D12DescriptorHeap* descriptorHeap = nullptr;
-		D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};
-		descriptorHeapDesc.Type = heapType;
-		descriptorHeapDesc.NumDescriptors = numDesciptors;
-
-		descriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
-		HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
-		assert(SUCCEEDED(hr));
-		return descriptorHeap;
-	}
 
 #pragma region ディスクリプターヒープの生成
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
@@ -533,6 +520,10 @@ void DirectXCommon::FenceInitialize() {
 	commandList->RSSetViewports(1, &viewport); 
 }
 
+void DirectXCommon::ViewportInitialize() {
+
+}
+
 void DirectXCommon::ScissoringInitialize() {
 
 }
@@ -551,7 +542,19 @@ void DirectXCommon::DXCCompilerInitialize() {
 }
 
 void DirectXCommon::ImGuiInitialize() {
-
+	// ImGuiの初期化
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(winApp->GetHwnd());
+	ImGui_ImplDX12_Init(
+	    device.Get(),
+		swapChainDesc.BufferCount,
+		rtvDesc.Format, 
+		srvDescriptorHeap.Get(),
+		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
+	    srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
+	);
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) { 

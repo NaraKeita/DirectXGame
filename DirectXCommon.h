@@ -14,7 +14,7 @@ class DirectXCommon {
 public:
 	void Initialize();
 	
-	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
+	//std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
 
 private:
 	void DeviceInitialize();              //デバイス
@@ -23,20 +23,19 @@ private:
 	void ZBufferInitialize();             // 深度バッファ
 	void DescriptorHeapInitialize();      // デスクリプタヒープ
 	void RenderTargetInitialize();        // レンダーターゲットビュー
-	void GetSRVCPUDescriptorHandle();
-	void ZBufferStencilViewInitialize();
-	void FenceInitialize();
-	void ScissoringInitialize();
-	void DXCCompilerInitialize();
-	void ImGuiInitialize();
+	void GetSRVCPUDescriptorHandle();     //
+	void ZBufferStencilViewInitialize();  //深度ステンシルビュー
+	void FenceInitialize();               //フェンスの生成
+	void ViewportInitialize();            //ビューポート矩形の初期化
+	void ScissoringInitialize();          //シザリング矩形の生成
+	void DXCCompilerInitialize();         //DCXコンパイラの生成
+	void ImGuiInitialize();               //ImGuiの初期化
 
 private:
-	//Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
-
 	//DirectX12デバイス
 	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 	//DXGIファクトリ
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory;
+	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
 	//WindowsAPI
 	WinApp* winApp = nullptr;
 
