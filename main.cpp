@@ -810,12 +810,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//textureSrvHandleGPU.ptr += descriptorSizeSRV;
 	//device->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 
-	
-
-	
-	
-	
-
 #pragma region PSO
 
 	// RootSignature

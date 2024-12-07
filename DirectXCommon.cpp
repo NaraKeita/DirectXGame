@@ -7,6 +7,7 @@
 #pragma comment(lib, "dxgi.lib")
 #include "externals/DirectXTex/DirectXTex.h"
 #include <dxcapi.h>
+
 using namespace Logger;
 
 std::wstring ConvertString(const std::string& str) {
