@@ -30,6 +30,7 @@ public:
 	
 private:
 	void DeviceInitialize();              //デバイス
+	
 	void CommandInitialize();             // コマンド関連
 	void SwapChainInitialize();           // スワップチェイン
 	void ZBufferInitialize();             // 深度バッファ

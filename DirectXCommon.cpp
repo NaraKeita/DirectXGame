@@ -302,6 +302,7 @@ void DirectXCommon::DeviceInitialize() {
 
 }
 
+
 //コマンド関連の初期化
 void DirectXCommon::CommandInitialize() {
 #pragma region コマンドアロケータ
