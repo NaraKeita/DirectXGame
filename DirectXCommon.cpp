@@ -524,9 +524,9 @@ void DirectXCommon::ZBufferStencilViewInitialize() {
 	device->CreateDepthStencilView(depthStencilResource.Get(), &dscDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-void DirectXCommon::FenceInitialize() { 
-	D3D12_FENCE_FLAGS fence;
-}
+//void DirectXCommon::FenceInitialize() { 
+//	D3D12_FENCE_FLAGS fence;
+//}
 
 void DirectXCommon::ViewportInitialize() {
 	// ビューポート
@@ -542,7 +542,7 @@ void DirectXCommon::ViewportInitialize() {
 	commandList->RSSetViewports(1, &viewport);
 }
 
-void DirectXCommon::ScissoringInitialize() { int scissoring; }
+//void DirectXCommon::ScissoringInitialize() { int scissoring; }
 
 void DirectXCommon::DXCCompilerInitialize() {
 	// DXC

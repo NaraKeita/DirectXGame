@@ -1305,7 +1305,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//		assert(SUCCEEDED(hr));
 		//
 		//}
-		//
+	}
 		// delete input;
 
 		//
@@ -1374,5 +1374,5 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		delete dxCommon;
 
 		return 0;
-	}
+	
 }
