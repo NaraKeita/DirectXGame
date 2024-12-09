@@ -7,6 +7,11 @@
 #pragma comment(lib, "dxgi.lib")
 #include "externals/DirectXTex/DirectXTex.h"
 #include <dxcapi.h>
+#include "externals/imgui/imgui.h"
+#include "externals/imgui/imgui_impl_dx12.h"
+#include "externals/imgui/imgui_impl_win32.h"
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 using namespace Logger;
 
@@ -155,6 +160,24 @@ ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t 
 	return resource;
 }
 
+void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
+
+	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+
+	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
+		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
+		HRESULT hr = texture->WriteToSubresource(
+		    UINT(mipLevel),
+		    nullptr,              // 全領域へコピー
+		    img->pixels,          // 元データアドレス
+		    UINT(img->rowPitch),  // 1ラインサイズ
+		    UINT(img->slicePitch) // 1枚サイズ
+		);
+		assert(SUCCEEDED(hr));
+	}
+}
+
+
 ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDesciptors, bool shaderVisible) {
 	// ディスクリプターヒープの生成
 	ID3D12DescriptorHeap* descriptorHeap = nullptr;
@@ -167,6 +190,28 @@ ID3D12DescriptorHeap* CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTO
 	HRESULT hr = device->CreateDescriptorHeap(&descriptorHeapDesc, IID_PPV_ARGS(&descriptorHeap));
 	assert(SUCCEEDED(hr));
 	return descriptorHeap;
+}
+
+// ウィンドウプロシージャ
+LRESULT CALLBACK WindowProc(
+    HWND hwnd, UINT msg,
+
+    WPARAM wparam, LPARAM lparam) {
+	// メッセージに応じてゲーム固有の処理を行う
+	switch (msg) {
+		// ウィンドウが破壊された
+	case WM_DESTROY:
+		// OSに対して、アプリの終了を伝える
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+		return true;
+	}
+
+	// 標準のメッセージ処理を行う
+	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
 void DirectXCommon::Initialize() {
@@ -226,7 +271,7 @@ void DirectXCommon::DeviceInitialize() {
 
 	// HREUSLTはWindouws系のエラーコード
 	// 関数が成功したかどうかをSUCCEEDEDマクロで判定できる
-	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
+	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
 	// 初期化の標本的な部分でエラーが出た場合はぷろぐらむがまちがっているか、
 	//  どうにもできない場合が多いのでassertにしておく
 	assert(SUCCEEDED(hr)); // 甲であることを保証　そうでないと止まる
@@ -361,7 +406,6 @@ void DirectXCommon::DescriptorHeapInitialize() {
 
 	dsvDescriptorHeap2 = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
-
 #pragma endregion
 
 	descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
@@ -376,7 +420,12 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	// textureを読んで転送
 	DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
 	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
+
+	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CrateTextureResource(device.Get(), metadata2);
+	UploadTextureData(textureResource2.Get(), mipImages2);
+
+	depthStencilResource2 = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 
 	// metadataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
@@ -524,9 +573,9 @@ void DirectXCommon::ImGuiInitialize() {
 	);
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) { 
-	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
-}
+//D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) { 
+//	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
+//}
 
 void DirectXCommon::ZBufferInitialize() {
 

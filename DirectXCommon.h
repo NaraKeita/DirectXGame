@@ -71,6 +71,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2;
+
 	// スワップチェイン生成
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
 
