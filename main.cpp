@@ -1,3 +1,5 @@
+#pragma region include
+
 #include <Windows.h>
 #include <cassert>
 //#include <cstdint>
@@ -26,6 +28,9 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
 
+#pragma endregion
+
+#pragma region コメントアウト
 //// ComplierShader関数
 //IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler) {
 //	// 1.hlslファイル
@@ -75,7 +80,9 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 //
 //	return shaderBlob;
 //}
+#pragma endregion
 
+#pragma region Vector
 struct Vector2 {
 	float x;
 	float y;
@@ -93,15 +100,15 @@ struct Vector4 {
 	float z;
 	float s;
 };
+#pragma endregion
 
+#pragma region Matrix
 struct Matrix3x3 {
 	float m[3][3];
 };
-
 struct Matrix4x4 {
 	float m[4][4];
 };
-
 Matrix4x4 MakeIdentity4x4() {
 	Matrix4x4 result{};
 
@@ -124,7 +131,6 @@ Matrix4x4 MakeIdentity4x4() {
 
 	return result;
 }
-
 Matrix4x4 MakeScaleMatrix(Vector3 scale) {
 	Matrix4x4 result{};
 	result.m[0][0] = scale.x;
@@ -189,6 +195,7 @@ Matrix4x4 MakeTranslateMatrix(Vector3 translate) {
 
 	return result;
 }
+#pragma endregion
 
 struct Transform {
 	Vector3 scale;
@@ -434,34 +441,32 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 	return result;
 }
 
+#pragma region 構造体
 struct VertexData {
 	Vector4 position;
 	Vector2 texcoord;
 	Vector3 normal;
 };
-
 struct Sphere {
 	Vector3 center;
 	float radius;
 };
-
 struct Material {
 	Vector4 color;
 	int32_t enableLighting;
 	float padding[3]; // 枠確保用06-01 9
 	Matrix4x4 uvTransform;
 };
-
 struct TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
 };
-
 struct DirectionalLight {
 	Vector4 color;
 	Vector3 direction;
 	float intensity;
 };
+#pragma endregion
 
 Vector3 Normalize(const Vector3& v) {
 	Vector3 result;
@@ -717,8 +722,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region Windouの生成
 
-	HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
-	ShowWindow(hwnd, SW_SHOW);
+	/*HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
+	ShowWindow(hwnd, SW_SHOW);*/
 
 #pragma endregion
 
@@ -731,7 +736,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	DirectXCommon* dxCommon = nullptr;
 	// DirectXの初期化
 	dxCommon = new DirectXCommon();
-	dxCommon->Initialize();
+	dxCommon->Initialize(winApp);
 
 	Input* input = nullptr;
 	input = new Input();
@@ -1159,28 +1164,28 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// keyboard->Acquire();
 		// keyboard->GetDeviceState(sizeof(key), key);
 		// 数字の0キーを押されていたら
-		if (input->TriggerKey(DIK_0)) {
-			OutputDebugStringA("Hit 0\n"); // 出力ウィンドウに[Hit 0]と表示
-		}
+		//if (input->TriggerKey(DIK_0)) {
+		//	OutputDebugStringA("Hit 0\n"); // 出力ウィンドウに[Hit 0]と表示
+		//}
 
-		// 動き確認用
-		if (input->PusuKey(DIK_LEFT) || input->PusuKey(DIK_A)) {
-			transformSphere.translate.x -= 0.01f;
-		}
-		if (input->PusuKey(DIK_RIGHT) || input->PusuKey(DIK_D)) {
-			transformSphere.translate.x += 0.01f;
-		}
-		if (input->PusuKey(DIK_UP) || input->PusuKey(DIK_W)) {
-			transformSphere.translate.y += 0.01f;
-		}
-		if (input->PusuKey(DIK_DOWN) || input->PusuKey(DIK_S)) {
-			transformSphere.translate.y -= 0.01f;
-		}
+		//// 動き確認用
+		//if (input->PusuKey(DIK_LEFT) || input->PusuKey(DIK_A)) {
+		//	transformSphere.translate.x -= 0.01f;
+		//}
+		//if (input->PusuKey(DIK_RIGHT) || input->PusuKey(DIK_D)) {
+		//	transformSphere.translate.x += 0.01f;
+		//}
+		//if (input->PusuKey(DIK_UP) || input->PusuKey(DIK_W)) {
+		//	transformSphere.translate.y += 0.01f;
+		//}
+		//if (input->PusuKey(DIK_DOWN) || input->PusuKey(DIK_S)) {
+		//	transformSphere.translate.y -= 0.01f;
+		//}
 
-		if (input->TriggerKey(DIK_SPACE)) {
-			trrigerCheck *= -1.0f;
-			transformSphere.translate.x += trrigerCheck;
-		}
+		//if (input->TriggerKey(DIK_SPACE)) {
+		//	trrigerCheck *= -1.0f;
+		//	transformSphere.translate.x += trrigerCheck;
+		//}
 
 		//--------------------------------------------//
 
