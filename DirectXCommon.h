@@ -14,6 +14,7 @@
 #include<dxcapi.h>
 
 #include"externals/DirectXTex/DirectXTex.h"
+
 //extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 
@@ -74,7 +75,7 @@ private://メンバ変数
 	// フェンスの初期化
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
 	//デスクリプタヒープを生成する
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
 
@@ -95,6 +96,9 @@ private://メンバ変数
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+
+	//マテリアル
+	//Material* materialDateSphere = nullptr;
 
 	// スワップチェーンリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;

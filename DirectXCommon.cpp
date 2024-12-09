@@ -65,6 +65,22 @@ IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, ID
 
 	return shaderBlob;
 }
+//struct Vector4 {
+//	float x;
+//	float y;
+//	float z;
+//	float s;
+//};
+//struct Matrix4x4 {
+//	float m[4][4];
+//};
+//
+//struct Material {
+//	Vector4 color;
+//	int32_t enableLighting;
+//	float padding[3]; // 枠確保用06-01 9
+//	Matrix4x4 uvTransform;
+//};
 
 DirectX::ScratchImage LoadTexture(const std::string& filePath) {
 	// テクスチャファイル // byte関連
@@ -185,10 +201,10 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	CommandInitialize();
 	SwapChainInitialize();
 	ZBufferInitialize();
-	DescriptorHeapInitialize();
+	
 	CreateAllDescriptorHeap();
 	RenderTargetInitialize();
-
+	DescriptorHeapInitialize();
 	/*GetSRVCPUDescriptorHandle();
 	GetSRVGPUDescriptorHandle();*/
 	ZBufferStencilViewInitialize();
@@ -531,6 +547,7 @@ void DirectXCommon::DXCCompilerInitialize() {
 	assert(SUCCEEDED(hr));
 	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
 	assert(SUCCEEDED(hr));
+
 }
 
 void DirectXCommon::ImGuiInitialize() {
@@ -547,6 +564,9 @@ void DirectXCommon::ImGuiInitialize() {
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 	    srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
 	);
+
+	
+
 }
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
 	return D3D12_CPU_DESCRIPTOR_HANDLE();
