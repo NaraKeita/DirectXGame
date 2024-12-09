@@ -35,16 +35,22 @@ private:
 	void SwapChainInitialize();           // スワップチェイン
 	void ZBufferInitialize();             // 深度バッファ
 	void DescriptorHeapInitialize();      // デスクリプタヒープ
+
+	void CreateAllDescriptorHeap();
+
 	void RenderTargetInitialize();        // レンダーターゲットビュー
 
-	void GetSRVCPUDescriptorHandle();     //SRV専用デスクリプタハンドル取得関数
+	//void GetSRVCPUDescriptorHandle();     //SRV専用デスクリプタハンドル取得関数
+	//void GetSRVGPUDescriptorHandle();
 
 	void ZBufferStencilViewInitialize();  //深度ステンシルビュー
 	void FenceInitialize();               //フェンスの生成
 	void ViewportInitialize();            //ビューポート矩形の初期化
-	void ScissoringInitialize();          //シザリング矩形の生成
+	void ScissoringInitialize(); // シザリング矩形の生成
 	void DXCCompilerInitialize();         //DCXコンパイラの生成
 	void ImGuiInitialize();               //ImGuiの初期化
+
+		
 
 private:
 	//DirectX12デバイス
@@ -67,10 +73,10 @@ private:
 	// フェンスの初期化
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
 	//デスクリプタヒープを生成する
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2;
 
@@ -86,9 +92,9 @@ private:
 	// スワップチェーンリソース
 	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
 
-	uint32_t descriptorSizeSRV;
-	uint32_t descriptorSizeRTV;
-	uint32_t descriptorSizeDSV;
+	uint32_t descriptorSizeSRV = 1280;
+	uint32_t descriptorSizeRTV = 1280;
+	uint32_t descriptorSizeDSV = 1280;
 
 	// 指定番号のCPUデスクリプタハンドルを取得する
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);

@@ -125,11 +125,11 @@ ID3D12Resource* CrateTextureResource(ID3D12Device* device, const DirectX::TexMet
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
 
-	//// Resouceの生成
-	// ID3D12Resource* resource = nullptr;
-	// HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&resource));
-	// assert(SUCCEEDED(hr));
-	// return resource;
+	// Resouceの生成
+	 ID3D12Resource* resource = nullptr;
+	 HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&resource));
+	 assert(SUCCEEDED(hr));
+	 return resource;
 }
 
 ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t width, int32_t height) {
@@ -225,8 +225,11 @@ void DirectXCommon::Initialize() {
 	SwapChainInitialize();
 	ZBufferInitialize();
 	DescriptorHeapInitialize();
+	CreateAllDescriptorHeap();
 	RenderTargetInitialize();
-	GetSRVCPUDescriptorHandle();
+
+	/*GetSRVCPUDescriptorHandle();
+	GetSRVGPUDescriptorHandle();*/
 	ZBufferStencilViewInitialize();
 	FenceInitialize();
 	ScissoringInitialize();
@@ -250,9 +253,13 @@ void DirectXCommon::Initialize() {
 
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) { 
-	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
-}
+//D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) { 
+//	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
+//}
+//
+//D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVGPUDescriptorHandle(uint32_t index) {
+//	return GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
+//}
 
 void DirectXCommon::DeviceInitialize() {
 	HRESULT hr;
@@ -401,17 +408,9 @@ void DirectXCommon::SwapChainInitialize() {
 void DirectXCommon::DescriptorHeapInitialize() {
 
 #pragma region ディスクリプターヒープの生成
-	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
-	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
-
-	dsvDescriptorHeap2 = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
 #pragma endregion
-
-	descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 	// DSV生成
 	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
@@ -441,6 +440,18 @@ void DirectXCommon::DescriptorHeapInitialize() {
 
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
+	
+}
+
+void DirectXCommon::CreateAllDescriptorHeap() {
+	descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	dsvDescriptorHeap2 = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+
 	
 }
 
@@ -511,6 +522,10 @@ void DirectXCommon::RenderTargetInitialize() {
 
 }
 
+//void DirectXCommon::GetSRVGPUDescriptorHandle(uint32_t index) {
+//	return GetSRVGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
+//}
+
 void DirectXCommon::ZBufferStencilViewInitialize() {
 
 	depthStencilResource = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
@@ -525,9 +540,9 @@ void DirectXCommon::ZBufferStencilViewInitialize() {
 	device->CreateDepthStencilView(depthStencilResource.Get(), &dscDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-//void DirectXCommon::FenceInitialize() { 
-//	D3D12_FENCE_FLAGS fence;
-//}
+void DirectXCommon::FenceInitialize() { 
+	//D3D12_FENCE_FLAGS fence;
+}
 
 void DirectXCommon::ViewportInitialize() {
 	// ビューポート
@@ -543,7 +558,10 @@ void DirectXCommon::ViewportInitialize() {
 	commandList->RSSetViewports(1, &viewport);
 }
 
-//void DirectXCommon::ScissoringInitialize() { int scissoring; }
+void DirectXCommon::ScissoringInitialize() {
+	int scissoring;
+	scissoring;
+}
 
 void DirectXCommon::DXCCompilerInitialize() {
 	// DXC
@@ -573,7 +591,22 @@ void DirectXCommon::ImGuiInitialize() {
 	    srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
 	);
 }
-
+Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
+	return Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>();
+}
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
+	return D3D12_CPU_DESCRIPTOR_HANDLE();
+}
+D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
+	return D3D12_GPU_DESCRIPTOR_HANDLE();
+}
+D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) {
+	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
+}
+D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVGPUDescriptorHandle(uint32_t index) {
+	return GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
+}
+//
 //D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) { 
 //	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
 //}

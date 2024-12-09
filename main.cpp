@@ -26,55 +26,55 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
 
-// ComplierShader関数
-IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler) {
-	// 1.hlslファイル
-	//log(ConvertString(std::format(L"Begin CompileShader,path:{},profile:{}\n", filePath, profile)));
-
-	Microsoft::WRL::ComPtr<IDxcBlobEncoding> shaderSource = nullptr;
-	
-	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
-
-	assert(SUCCEEDED(hr));
-
-	DxcBuffer shaderSourceBuffer;
-	shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
-	shaderSourceBuffer.Size = shaderSource->GetBufferSize();
-	shaderSourceBuffer.Encoding = DXC_CP_UTF8;
-
-	// 2.Complie
-	LPCWSTR arguments[] = {
-	    filePath.c_str(), L"-E", L"main", L"-T", profile, L"-Zi", L"-Qembed_debug", L"-Od", L"-Zpr",
-	};
-
-	Microsoft::WRL::ComPtr<IDxcResult> shaderResult = nullptr;
-	
-	hr = dxcCompiler->Compile(&shaderSourceBuffer, arguments, _countof(arguments), includeHandler, IID_PPV_ARGS(&shaderResult));
-
-	assert(SUCCEEDED(hr));
-
-	// 3.警告エラー
-
-
-	IDxcBlobUtf8* shaderError = nullptr;
-	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
-	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
-	//	log(shaderError->GetStringPointer());
-		// 警告エラーダメ絶対
-		assert(false);
-	}
-	// 4.Complie結果
-	IDxcBlob* shaderBlob = nullptr;
-	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
-	assert(SUCCEEDED(hr));
-
-	//log(ConvertString(std::format(L"Compile Succeeded,path:{},profile:{}\n", filePath, profile)));
-
-	shaderSource->Release();
-	shaderResult->Release();
-
-	return shaderBlob;
-}
+//// ComplierShader関数
+//IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler) {
+//	// 1.hlslファイル
+//	//log(ConvertString(std::format(L"Begin CompileShader,path:{},profile:{}\n", filePath, profile)));
+//
+//	Microsoft::WRL::ComPtr<IDxcBlobEncoding> shaderSource = nullptr;
+//	
+//	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
+//
+//	assert(SUCCEEDED(hr));
+//
+//	DxcBuffer shaderSourceBuffer;
+//	shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
+//	shaderSourceBuffer.Size = shaderSource->GetBufferSize();
+//	shaderSourceBuffer.Encoding = DXC_CP_UTF8;
+//
+//	// 2.Complie
+//	LPCWSTR arguments[] = {
+//	    filePath.c_str(), L"-E", L"main", L"-T", profile, L"-Zi", L"-Qembed_debug", L"-Od", L"-Zpr",
+//	};
+//
+//	Microsoft::WRL::ComPtr<IDxcResult> shaderResult = nullptr;
+//	
+//	hr = dxcCompiler->Compile(&shaderSourceBuffer, arguments, _countof(arguments), includeHandler, IID_PPV_ARGS(&shaderResult));
+//
+//	assert(SUCCEEDED(hr));
+//
+//	// 3.警告エラー
+//
+//
+//	IDxcBlobUtf8* shaderError = nullptr;
+//	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
+//	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
+//	//	log(shaderError->GetStringPointer());
+//		// 警告エラーダメ絶対
+//		assert(false);
+//	}
+//	// 4.Complie結果
+//	IDxcBlob* shaderBlob = nullptr;
+//	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
+//	assert(SUCCEEDED(hr));
+//
+//	//log(ConvertString(std::format(L"Compile Succeeded,path:{},profile:{}\n", filePath, profile)));
+//
+//	shaderSource->Release();
+//	shaderResult->Release();
+//
+//	return shaderBlob;
+//}
 
 struct Vector2 {
 	float x;
@@ -702,25 +702,23 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descrip
 
 // Windowsアプリのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-
 	struct D3DResourceLeakChecker {
 		~D3DResourceLeakChecker() {
-
 			// リソースリークチェック
 			Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
 			if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
 				debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
 				debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
 				debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-				// debug->Release();
+				debug->Release();
 			}
 		}
 	};
 
 #pragma region Windouの生成
 
-	/*HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
-	ShowWindow(hwnd, SW_SHOW);*/
+	HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
+	ShowWindow(hwnd, SW_SHOW);
 
 #pragma endregion
 
@@ -1011,43 +1009,43 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	VertexData* vertexDataModel = nullptr;
 	// vertexResourceModel->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataModel));
-	std::memcpy(vertexDataModel, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	//std::memcpy(vertexDataModel, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
 	// マテリアル用のリソース
 	// Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSphere = CreateBufferResource(device.Get(), sizeof(Material));
 
 	// マテリアルにデータを書き込む
-	Material* materialDateSphere = nullptr;
+	//Material* materialDateSphere = nullptr;
 	// 書き込むためのアドレス
 	// materialResourceSphere->Map(0, nullptr, reinterpret_cast<void**>(&materialDateSphere));
 	// 色の設定
-	materialDateSphere->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	/*materialDateSphere->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialDateSphere->enableLighting = true;
-	materialDateSphere->uvTransform = MakeIdentity4x4();
+	materialDateSphere->uvTransform = MakeIdentity4x4();*/
 
 	// 球体マテリアルのライト用のリソース
 	// Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightSphereResource = CreateBufferResource(device.Get(), sizeof(DirectionalLight));
 
 	// マテリアルにデータを書き込む
-	DirectionalLight* directionalLightSphereData = nullptr;
+	//DirectionalLight* directionalLightSphereData = nullptr;
 	// 書き込むためのアドレス
 	// directionalLightSphereResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightSphereData));
 	// 色の設定
-	directionalLightSphereData->color = {1.0f, 1.0f, 1.0f, 1.0f};
+	/*directionalLightSphereData->color = {1.0f, 1.0f, 1.0f, 1.0f};
 	directionalLightSphereData->direction = {0.0f, -1.0f, 0.0f};
-	directionalLightSphereData->intensity = 1.0f;
+	directionalLightSphereData->intensity = 1.0f;*/
 
 	// spriteのリソース
 	// Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSprite = CreateBufferResource(device.Get(), sizeof(Material));
 
 	// マテリアルにデータを書き込む
-	Material* materialDateSprite = nullptr;
+	//Material* materialDateSprite = nullptr;
 	// 書き込むためのアドレス
 	// materialResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&materialDateSprite));
 	// 色の設定
-	materialDateSprite->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-	materialDateSprite->enableLighting = false;
-	materialDateSprite->uvTransform = MakeIdentity4x4();
+	//materialDateSprite->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	//materialDateSprite->enableLighting = false;
+	//materialDateSprite->uvTransform = MakeIdentity4x4();
 
 	D3D12_RECT scissorRect{};
 
@@ -1091,15 +1089,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         {0.0f, 0.0f, 0.0f}
     };
 
-	float* inputMaterialSphere[3] = {&materialDateSphere->color.x, &materialDateSphere->color.y, &materialDateSphere->color.z};
+	//float* inputMaterialSphere[3] = {&materialDateSphere->color.x, &materialDateSphere->color.y, &materialDateSphere->color.z};
 	float* inputTransformSphere[3] = {&transformSphere.translate.x, &transformSphere.translate.y, &transformSphere.translate.z};
 	float* inputRotateSphere[3] = {&transformSphere.rotate.x, &transformSphere.rotate.y, &transformSphere.rotate.z};
 	float* inputScaleSphere[3] = {&transformSphere.scale.x, &transformSphere.scale.y, &transformSphere.scale.z};
 	float textureChange = 0;
 
-	float* inputMaterialLigth[3] = {&directionalLightSphereData->color.x, &directionalLightSphereData->color.y, &directionalLightSphereData->color.z};
+	/*float* inputMaterialLigth[3] = {&directionalLightSphereData->color.x, &directionalLightSphereData->color.y, &directionalLightSphereData->color.z};
 	float* inputDirectionLight[3] = {&directionalLightSphereData->direction.x, &directionalLightSphereData->direction.y, &directionalLightSphereData->direction.z};
-	float* intensity = &directionalLightSphereData->intensity;
+	float* intensity = &directionalLightSphereData->intensity;*/
 
 	float trrigerCheck = 1.0f;
 
@@ -1134,7 +1132,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		DrawSphere(vertexDataSphere);*/
 
-		directionalLightSphereData->direction = Normalize(directionalLightSphereData->direction);
+		//directionalLightSphereData->direction = Normalize(directionalLightSphereData->direction);
 		Matrix4x4 worldMatrixSprite = MakeAffineMatrix(transformSprite.scale, transformSprite.rotate, transformSprite.translate);
 		// Matrix4x4 cameraMatrixSprite = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 		Matrix4x4 viewMatrixSprite = MakeIdentity4x4();
@@ -1145,7 +1143,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 uvTransformMatrix = MakeScaleMatrix(uvTransformSprite.scale);
 		uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateZMatrix(uvTransformSprite.rotate.z));
 		uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
-		materialDateSprite->uvTransform = uvTransformMatrix;
+		//materialDateSprite->uvTransform = uvTransformMatrix;
 
 		// 開発用UIの処理
 		// ImGui::ShowDemoWindow();
@@ -1189,8 +1187,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ここにテキストを入れられる
 		ImGui::Text("ImGuiText");
 		ImGui::Text("Sphere");
-		ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
-		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
+		/*ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
+		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);*/
 		ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
 		ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
 		ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
