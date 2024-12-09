@@ -232,6 +232,7 @@ void DirectXCommon::Initialize() {
 	ScissoringInitialize();
 	DXCCompilerInitialize();
 	ImGuiInitialize();
+
 	
 	/*D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_12_2, D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_0};
 	const char* featureLevelStrings[] = {"12.2", "12.1", "12,0"};
