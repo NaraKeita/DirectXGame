@@ -827,12 +827,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 		}
 	};
-
-	//ポインタ
-	DirectXCommon* dxCommon = nullptr;
-	//DirectXの初期化
-	dxCommon = new DirectXCommon();
-	dxCommon->Initialize();
 	
 #pragma region Windouの生成
 	
