@@ -505,7 +505,7 @@ void DirectXCommon::ZBufferStencilViewInitialize() {
 
 	// DSVHeapの先頭
 	device->CreateDepthStencilView(depthStencilResource.Get(), &dscDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
-a
+//a
 }
 
 void DirectXCommon::FenceInitialize() { 
