@@ -19,7 +19,7 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -903,7 +903,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// assert(vertexShaderBlob != nullptr);
 	// Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"resource/shaders/Object3d.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 
-	assert(pixelShaderBlob != nullptr);
+	//assert(pixelShaderBlob != nullptr);
 
 	/*D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
@@ -932,7 +932,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
 
 	/*hr = device->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState));*/
-	assert(SUCCEEDED(hr));
+	//assert(SUCCEEDED(hr));
 
 #pragma endregion
 
@@ -1117,11 +1117,34 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
-		// ゲームの処理
-		ImGui_ImplDX12_NewFrame();
-		ImGui_ImplWin32_NewFrame();
-		ImGui::NewFrame();
-
+		//// ゲームの処理
+		//ImGui_ImplDX12_NewFrame();
+		//ImGui_ImplWin32_NewFrame();
+		//ImGui::NewFrame();
+		ImGui::Begin("Window"); 
+		// ここにテキストを入れられる
+		ImGui::Text("ImGuiText");
+		ImGui::Text("Sphere");
+		/*ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
+		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);*/
+		ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
+		ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
+		ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
+		ImGui::SliderFloat3("SliderRotateSphere", *inputRotateSphere, -10.0f, 10.0f);
+		ImGui::InputFloat3("ScaleSphere", *inputScaleSphere);
+		ImGui::SliderFloat3("SliderScaleSphere", *inputScaleSphere, 0.5f, 5.0f);
+		ImGui::InputFloat("SphereTexture", &textureChange);
+		ImGui::Text("Sprite");
+		ImGui::InputFloat("SpriteX", &transformSprite.translate.x);
+		ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
+		ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
+		ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
+		ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
+		ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
+		ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+		ImGui::End();
 		// 入力の更新
 		input->Update();
 
@@ -1189,28 +1212,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//--------------------------------------------//
 
-		// ここにテキストを入れられる
-		ImGui::Text("ImGuiText");
-		ImGui::Text("Sphere");
-		/*ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
-		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);*/
-		ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
-		ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
-		ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
-		ImGui::SliderFloat3("SliderRotateSphere", *inputRotateSphere, -10.0f, 10.0f);
-		ImGui::InputFloat3("ScaleSphere", *inputScaleSphere);
-		ImGui::SliderFloat3("SliderScaleSphere", *inputScaleSphere, 0.5f, 5.0f);
-		ImGui::InputFloat("SphereTexture", &textureChange);
-		ImGui::Text("Sprite");
-		ImGui::InputFloat("SpriteX", &transformSprite.translate.x);
-		ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
-		ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
-		ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
-		ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
-		ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
-		ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
 		//// ImGuiの内部コマンド
 		// ImGui::Render();
@@ -1347,7 +1348,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// materialResourceSprite->Release();
 
 #ifdef _DEBUG
-		debugController->Release();
+		//debugController->Release();
 #endif
 
 		// mipImages.Release();

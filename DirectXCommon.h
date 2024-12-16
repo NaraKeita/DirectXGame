@@ -35,7 +35,7 @@ private:
 	
 	void CommandInitialize();             // コマンド関連
 	void SwapChainInitialize();           // スワップチェイン
-	void ZBufferInitialize();             // 深度バッファ
+	//void ZBufferInitialize();             
 	void DescriptorHeapInitialize();      // デスクリプタヒープ
 
 	void CreateAllDescriptorHeap();
@@ -48,19 +48,19 @@ private:
 	void ZBufferStencilViewInitialize();  //深度ステンシルビュー
 	void FenceInitialize();               //フェンスの生成
 	void ViewportInitialize();            //ビューポート矩形の初期化
-	void ScissoringInitialize(); // シザリング矩形の生成
+	void ScissoringInitialize();          // シザリング矩形の生成
 	void DXCCompilerInitialize();         //DCXコンパイラの生成
 	void ImGuiInitialize();               //ImGuiの初期化
-
+	void ZBufferInitialize();             // 深度バッファ
 		
 
 private://メンバ変数
 	//DirectX12デバイス
-	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12Device> device/* = nullptr*/;
 	//DXGIファクトリ
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
+	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory/* = nullptr*/;
 	//WindowsAPI
-	WinApp* winApp_ = nullptr;
+	WinApp* winApp = nullptr;
 
 	// コマンドアロケータ生成
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
@@ -78,6 +78,8 @@ private://メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
+
+	//Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2;
 
 	// DXC
 	IDxcUtils* dxcUtils = nullptr;
