@@ -371,6 +371,9 @@ void DirectXCommon::SwapChainInitialize() {
 
 void DirectXCommon::DescriptorHeapInitialize() {
 #pragma region ディスクリプターヒープの生成
+
+
+
 	// DSV生成
 	 D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
 	 dscDesc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
