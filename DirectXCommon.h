@@ -5,5 +5,10 @@
 
 //DirectX基盤
 class DirectXCommon {
+	public:
 	void Initialize();
+
+	public:
+	void Device();
+	void 
 };
