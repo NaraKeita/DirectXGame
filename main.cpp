@@ -17,6 +17,8 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 
+#include "DirectXCommon.h"
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -826,6 +828,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 	};
 
+	//ポインタ
+	DirectXCommon* dxCommon = nullptr;
+	//DirectXの初期化
+	dxCommon = new DirectXCommon();
+	dxCommon->Initialize();
 	
 #pragma region Windouの生成
 	
