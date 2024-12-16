@@ -114,10 +114,34 @@ ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMe
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
 
-	// DSV生成
-	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
-	dscDesc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dscDesc2.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	//// DSV生成
+	//D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
+	//dscDesc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	//dscDesc2.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+
+	//// textureを読んで転送
+	//DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
+	//const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
+
+	//// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
+	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CreateTextureResource(device.Get(), metadata2);
+	//UploadTextureData(textureResource2.Get(), mipImages2);
+
+	//// metadataを基にSRVの設定
+	//D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
+	//srvDesc2.Format = metadata2.format;
+	//srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	//srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	//srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
+
+	//// SRVを作成するDescriptorHeap場所決め
+	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
+	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
+
+
+	//// SRVの生成
+	//device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
+
 
 	// Resouceの生成
 	 ID3D12Resource* resource = nullptr;
@@ -179,28 +203,6 @@ void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mip
 }
 
 
-
-// ウィンドウプロシージャ
-LRESULT CALLBACK WindowProc(
-    HWND hwnd, UINT msg,
-
-    WPARAM wparam, LPARAM lparam) {
-	// メッセージに応じてゲーム固有の処理を行う
-	switch (msg) {
-		// ウィンドウが破壊された
-	case WM_DESTROY:
-		// OSに対して、アプリの終了を伝える
-		PostQuitMessage(0);
-		return 0;
-	}
-
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
-		return true;
-	}
-
-	// 標準のメッセージ処理を行う
-	return DefWindowProc(hwnd, msg, wparam, lparam);
-}
 
 void DirectXCommon::Initialize(WinApp* winApp) {
 	// NULL検出
@@ -399,30 +401,16 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	
 	
 	
-	// textureを読んで転送
-	DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
-	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
 	
-	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
-	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CreateTextureResource(device.Get(), metadata2);
-	UploadTextureData(textureResource2.Get(), mipImages2);
 
 	depthStencilResource2 = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 
-	// metadataを基にSRVの設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
-	srvDesc2.Format = metadata2.format;
-	srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
-
+	
 	// SRVを作成するDescriptorHeap場所決め
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
 
-	// SRVの生成
-	device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
-#pragma endregion
+	#pragma endregion
 }
 
 void DirectXCommon::CreateAllDescriptorHeap() {
@@ -587,9 +575,11 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t in
 	return GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
 }
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVGPUDescriptorHandle(uint32_t index) {
-	return GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index); }
+	return GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, index);
+}
 
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDesciptors, bool shaderVisible) {
+	
 	// ディスクリプターヒープの生成
 	ID3D12DescriptorHeap* descriptorHeap = nullptr;
 	D3D12_DESCRIPTOR_HEAP_DESC descriptorHeapDesc{};

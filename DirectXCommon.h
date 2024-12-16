@@ -79,6 +79,9 @@ private://メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
 
+	//ID3D12Resource* resource = nullptr;
+
+	//ID3D12DescriptorHeap* descriptorHeap = nullptr;
 	//Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2;
 
 	// DXC
