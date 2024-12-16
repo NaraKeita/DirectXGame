@@ -114,7 +114,10 @@ ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMe
 	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
 	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
 
-	a
+	// DSV生成
+	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
+	dscDesc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dscDesc2.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
 
 	// Resouceの生成
 	 ID3D12Resource* resource = nullptr;
@@ -393,11 +396,8 @@ void DirectXCommon::SwapChainInitialize() {
 
 void DirectXCommon::DescriptorHeapInitialize() {
 #pragma region ディスクリプターヒープの生成
-	a
-	// DSV生成
-	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
-	dscDesc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	dscDesc2.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	
+	
 	
 	// textureを読んで転送
 	DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
