@@ -82,6 +82,8 @@
 //}
 #pragma endregion
 
+
+
 #pragma region Vector
 struct Vector2 {
 	float x;
@@ -664,22 +666,22 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descrip
 
 
 
-//void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
-//
-//	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-//
-//	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
-//		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-//		HRESULT hr = texture->WriteToSubresource(
-//		    UINT(mipLevel),
-//		    nullptr,              // 全領域へコピー
-//		    img->pixels,          // 元データアドレス
-//		    UINT(img->rowPitch),  // 1ラインサイズ
-//		    UINT(img->slicePitch) // 1枚サイズ
-//		);
-//		assert(SUCCEEDED(hr));
-//	}
-//}
+void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
+
+	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+
+	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
+		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
+		HRESULT hr = texture->WriteToSubresource(
+		    UINT(mipLevel),
+		    nullptr,              // 全領域へコピー
+		    img->pixels,          // 元データアドレス
+		    UINT(img->rowPitch),  // 1ラインサイズ
+		    UINT(img->slicePitch) // 1枚サイズ
+		);
+		assert(SUCCEEDED(hr));
+	}
+}
 
 
 
