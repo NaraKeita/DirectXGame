@@ -372,8 +372,8 @@ void DirectXCommon::SwapChainInitialize() {
 void DirectXCommon::DescriptorHeapInitialize() {
 #pragma region ディスクリプターヒープの生成
 
-	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
-	rtvDescriptorHeapDesc
+	/*D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
+	rtvDescriptorHeapDesc*/
 
 	// DSV生成
 	 D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
