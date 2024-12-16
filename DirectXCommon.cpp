@@ -375,14 +375,11 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	/*D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	rtvDescriptorHeapDesc*/
 
-	// DSV生成
-	 D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
-	 dscDesc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	 dscDesc2.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	
 
 	// textureを読んで転送
-	 DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
-	 const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
+	DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
+	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
 
 	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
 	 Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CreateTextureResource(device.Get(), metadata2);
@@ -494,12 +491,21 @@ void DirectXCommon::ZBufferStencilViewInitialize() {
 	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
 	//dsvDescriptorHeap = CreateDescriptorHeap(,D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
+	
+
 	// DSV生成WIN
 	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc{};
 	dscDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dscDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+
+	// DSV生成
+	D3D12_DEPTH_STENCIL_VIEW_DESC dscDesc2{};
+	dscDesc2.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dscDesc2.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+
 	// DSVHeapの先頭
 	device->CreateDepthStencilView(depthStencilResource.Get(), &dscDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
+a
 }
 
 void DirectXCommon::FenceInitialize() { 
