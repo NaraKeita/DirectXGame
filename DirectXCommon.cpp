@@ -399,6 +399,9 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
+	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
+	dsvDescriptorHeap2 = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+
 
 	depthStencilResource2 = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 	
