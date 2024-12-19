@@ -392,6 +392,10 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	// srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	// srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
 
+	rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	srvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+
+
 	depthStencilResource2 = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 	
 	//// SRVを作成するDescriptorHeap場所決め
