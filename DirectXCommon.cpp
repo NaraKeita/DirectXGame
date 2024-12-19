@@ -402,6 +402,12 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
 	dsvDescriptorHeap2 = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 
+	// SRVを作成するDescriptorHeap場所決め
+	textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
+	textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
+	// 先頭ImGui
+	textureSrvHandleCPU2.ptr += descriptorSizeSRV;
+	textureSrvHandleGPU2.ptr += descriptorSizeSRV;
 
 	depthStencilResource2 = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 	

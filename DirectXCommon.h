@@ -83,6 +83,9 @@ private://メンバ変数
 	const uint32_t descriptorSizeRTV;
 	const uint32_t descriptorSizeDSV;
 
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2;
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2;
+
 	//ID3D12Resource* resource = nullptr;
 
 	//ID3D12DescriptorHeap* descriptorHeap = nullptr;
