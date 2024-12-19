@@ -79,6 +79,10 @@ private://メンバ変数
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
 
+	const uint32_t descriptorSizeSRV;
+	const uint32_t descriptorSizeRTV;
+	const uint32_t descriptorSizeDSV;
+
 	//ID3D12Resource* resource = nullptr;
 
 	//ID3D12DescriptorHeap* descriptorHeap = nullptr;
