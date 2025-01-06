@@ -22,14 +22,19 @@
 class DirectXCommon {
 public:
 	void Initialize(WinApp* winApp);
+	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 	// 指定番号のCPUデスクリプタハンドルを取得する
 	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
+	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
 	// 指定番号のGPUデスクリプタハンドルを取得する
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
-	
+	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
+	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
+
 private:
 	void DeviceInitialize();              //デバイス
 	
@@ -87,15 +92,28 @@ private://メンバ変数
 	ID3D12Resource* resource = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
+	//Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
+	
+//------------------------------------------------------------------//
+
+//------------------------------------------------------------------//
+
+	// デスクリプタヒープを生成する
+	uint32_t descriptorSizeSRV = 1280;
+	uint32_t descriptorSizeRTV = 1280;
+	uint32_t descriptorSizeDSV = 1280;
+
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2 = nullptr;
+
 //------------------------------------------------------------------//
 
 //--------------------------------fence-------------------------------//
 	// フェンスの初期化
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
-	//デスクリプタヒープを生成する
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
+	uint32_t fenceValue = 0;
+	
 //---------------------------------------------------------------------//
 
 	//ID3D12DescriptorHeap* rtvDescriptorHeap = nullptr;
@@ -106,9 +124,7 @@ private://メンバ変数
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU;
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 
-	uint32_t descriptorSizeSRV = 1280;
-	uint32_t descriptorSizeRTV = 1280;
-	uint32_t descriptorSizeDSV = 1280;
+	
 
 	//ID3D12Resource* resource = nullptr;
 
@@ -121,7 +137,7 @@ private://メンバ変数
 
 	
 
-	uint32_t fenceValue = 0;
+	
 
 	
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
@@ -130,7 +146,7 @@ private://メンバ変数
 	//Material* materialDateSphere = nullptr;
 
 	// スワップチェーンリソース
-	//std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
+	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
 
 	// 指定番号のCPUデスクリプタハンドルを取得する
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
