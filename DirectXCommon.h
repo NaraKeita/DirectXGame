@@ -38,7 +38,7 @@ private:
 	//void ZBufferInitialize();             
 	void DescriptorHeapInitialize();      // デスクリプタヒープ
 
-	void CreateAllDescriptorHeap();
+	//void CreateAllDescriptorHeap();
 
 	void RenderTargetInitialize();        // レンダーターゲットビュー
 
@@ -55,41 +55,61 @@ private:
 		
 
 private://メンバ変数
+//------------------------------Device--------------------------------------//
 	//DirectX12デバイス
 	Microsoft::WRL::ComPtr<ID3D12Device> device/* = nullptr*/;
 	//DXGIファクトリ
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory/* = nullptr*/;
+//--------------------------------------------------------------------------//
+
 	//WindowsAPI
 	WinApp* winApp = nullptr;
 
+//------------------------------command-----------------------------------------//
 	// コマンドアロケータ生成
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
 	// コマンドリスト生成
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
 	// コマンドキュー生成
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
+//------------------------------------------------------------------------------//
+
+//-----------------------------------------SwapChain---------------------------------//
+	// スワップチェイン生成
+	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
+	// SwapchainからResourceを引っ張ってくる
+	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource[2] = {nullptr};
+//----------------------------------------------------------------------------------//
+
+//------------------------------深度バッファ------------------------//
 	// 深度バッファの生成
 	ID3D12Resource* zBuffer = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
+//------------------------------------------------------------------//
+
+//--------------------------------fence-------------------------------//
 	// フェンスの初期化
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
 	//デスクリプタヒープを生成する
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
+//---------------------------------------------------------------------//
 
-	const uint32_t descriptorSizeSRV;
-	const uint32_t descriptorSizeRTV;
-	const uint32_t descriptorSizeDSV;
+	//ID3D12DescriptorHeap* rtvDescriptorHeap = nullptr;
 
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2;
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2;
 
-	//ID3D12Resource* resource = nullptr;
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU;
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 
-	//ID3D12DescriptorHeap* descriptorHeap = nullptr;
-	//Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2;
+	uint32_t descriptorSizeSRV = 1280;
+	uint32_t descriptorSizeRTV = 1280;
+	uint32_t descriptorSizeDSV = 1280;
+
+	//ID3D12Resource* resource = nullptr;
 
 	// DXC
 	IDxcUtils* dxcUtils = nullptr;
@@ -98,11 +118,7 @@ private://メンバ変数
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2;
 
-	// スワップチェイン生成
-	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
-
-	// SwapchainからResourceを引っ張ってくる
-	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource[2] = {nullptr};
+	
 
 	uint32_t fenceValue = 0;
 
@@ -113,11 +129,7 @@ private://メンバ変数
 	//Material* materialDateSphere = nullptr;
 
 	// スワップチェーンリソース
-	std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
-
-	uint32_t descriptorSizeSRV = 1280;
-	uint32_t descriptorSizeRTV = 1280;
-	uint32_t descriptorSizeDSV = 1280;
+	//std::array<Microsoft::WRL::ComPtr<ID3D12Resource>, 2> swapChainResources;
 
 	// 指定番号のCPUデスクリプタハンドルを取得する
 	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
