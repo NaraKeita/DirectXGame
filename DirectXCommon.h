@@ -62,9 +62,6 @@ private://メンバ変数
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory/* = nullptr*/;
 //--------------------------------------------------------------------------//
 
-	//WindowsAPI
-	WinApp* winApp = nullptr;
-
 //------------------------------command-----------------------------------------//
 	// コマンドアロケータ生成
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
@@ -75,15 +72,19 @@ private://メンバ変数
 //------------------------------------------------------------------------------//
 
 //-----------------------------------------SwapChain---------------------------------//
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	// スワップチェイン生成
 	Microsoft::WRL::ComPtr<IDXGISwapChain4> swapChain = nullptr;
 	// SwapchainからResourceを引っ張ってくる
 	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource[2] = {nullptr};
 //----------------------------------------------------------------------------------//
 
+	// WindowsAPI
+	WinApp* winApp = nullptr;
+
 //------------------------------深度バッファ------------------------//
 	// 深度バッファの生成
-	ID3D12Resource* zBuffer = nullptr;
+	ID3D12Resource* resource = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 //------------------------------------------------------------------//
@@ -122,7 +123,7 @@ private://メンバ変数
 
 	uint32_t fenceValue = 0;
 
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
 	//マテリアル
