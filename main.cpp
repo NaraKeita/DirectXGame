@@ -30,135 +30,113 @@
 
 #pragma endregion
 
-std::wstring ConvertString(const std::string& str) {
-	if (str.empty()) {
-		return std::wstring();
-	}
-
-	auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
-	if (sizeNeeded == 0) {
-		return std::wstring();
-	}
-	std::wstring result(sizeNeeded, 0);
-	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
-	return result;
-}
-
-#pragma region コメントアウト
-// ComplierShader関数
-IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler) {
-	// 1.hlslファイル
-	//log(ConvertString(std::format(L"Begin CompileShader,path:{},profile:{}\n", filePath, profile)));
-
-	Microsoft::WRL::ComPtr<IDxcBlobEncoding> shaderSource = nullptr;
-	
-	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
-
-	assert(SUCCEEDED(hr));
-
-	DxcBuffer shaderSourceBuffer;
-	shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
-	shaderSourceBuffer.Size = shaderSource->GetBufferSize();
-	shaderSourceBuffer.Encoding = DXC_CP_UTF8;
-
-	// 2.Complie
-	LPCWSTR arguments[] = {
-	    filePath.c_str(), L"-E", L"main", L"-T", profile, L"-Zi", L"-Qembed_debug", L"-Od", L"-Zpr",
-	};
-
-	Microsoft::WRL::ComPtr<IDxcResult> shaderResult = nullptr;
-	
-	hr = dxcCompiler->Compile(&shaderSourceBuffer, arguments, _countof(arguments), includeHandler, IID_PPV_ARGS(&shaderResult));
-
-	assert(SUCCEEDED(hr));
-
-	// 3.警告エラー
-
-
-	IDxcBlobUtf8* shaderError = nullptr;
-	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
-	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
-	//	log(shaderError->GetStringPointer());
-		// 警告エラーダメ絶対
-		assert(false);
-	}
-	// 4.Complie結果
-	IDxcBlob* shaderBlob = nullptr;
-	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
-	assert(SUCCEEDED(hr));
-
-	//log(ConvertString(std::format(L"Compile Succeeded,path:{},profile:{}\n", filePath, profile)));
-
-	shaderSource->Release();
-	shaderResult->Release();
-
-	return shaderBlob;
-}
+//std::wstring ConvertString(const std::string& str) {
+//	if (str.empty()) {
+//		return std::wstring();
+//	}
+//
+//	auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
+//	if (sizeNeeded == 0) {
+//		return std::wstring();
+//	}
+//	std::wstring result(sizeNeeded, 0);
+//	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
+//	return result;
+//}
+//
+//#pragma region コメントアウト
+//// ComplierShader関数
+//IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler) {
+//	// 1.hlslファイル
+//	//log(ConvertString(std::format(L"Begin CompileShader,path:{},profile:{}\n", filePath, profile)));
+//
+//	Microsoft::WRL::ComPtr<IDxcBlobEncoding> shaderSource = nullptr;
+//	
+//	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
+//
+//	assert(SUCCEEDED(hr));
+//
+//	DxcBuffer shaderSourceBuffer;
+//	shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
+//	shaderSourceBuffer.Size = shaderSource->GetBufferSize();
+//	shaderSourceBuffer.Encoding = DXC_CP_UTF8;
+//
+//	// 2.Complie
+//	LPCWSTR arguments[] = {
+//	    filePath.c_str(), L"-E", L"main", L"-T", profile, L"-Zi", L"-Qembed_debug", L"-Od", L"-Zpr",
+//	};
+//
+//	Microsoft::WRL::ComPtr<IDxcResult> shaderResult = nullptr;
+//	
+//	hr = dxcCompiler->Compile(&shaderSourceBuffer, arguments, _countof(arguments), includeHandler, IID_PPV_ARGS(&shaderResult));
+//
+//	assert(SUCCEEDED(hr));
+//
+//	// 3.警告エラー
+//
+//
+//	IDxcBlobUtf8* shaderError = nullptr;
+//	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
+//	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
+//	//	log(shaderError->GetStringPointer());
+//		// 警告エラーダメ絶対
+//		assert(false);
+//	}
+//	// 4.Complie結果
+//	IDxcBlob* shaderBlob = nullptr;
+//	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
+//	assert(SUCCEEDED(hr));
+//
+//	//log(ConvertString(std::format(L"Compile Succeeded,path:{},profile:{}\n", filePath, profile)));
+//
+//	shaderSource->Release();
+//	shaderResult->Release();
+//
+//	return shaderBlob;
+//}
 #pragma endregion
 
-DirectX::ScratchImage LoadTexture(const std::string& filePath) {
-	// テクスチャファイル // byte関連
-	DirectX::ScratchImage image{};
-	std::wstring filePathW = ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-	assert(SUCCEEDED(hr));
+//DirectX::ScratchImage LoadTexture(const std::string& filePath) {
+//	// テクスチャファイル // byte関連
+//	DirectX::ScratchImage image{};
+//	/*std::wstring filePathW = ConvertString(filePath);
+//	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+//	assert(SUCCEEDED(hr));*/
+//
+//	// ミップマップ　//拡大縮小で使う
+//	DirectX::ScratchImage mipImages{};
+//	/*hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+//	assert(SUCCEEDED(hr));*/
+//
+//	// ミップマップ付きのデータを返す
+//	return mipImages;
+//}
 
-	// ミップマップ　//拡大縮小で使う
-	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
 
-	// ミップマップ付きのデータを返す
-	return mipImages;
-}
 
-ID3D12Resource* CrateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata) {
-
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = UINT(metadata.width);                             // 幅
-	resourceDesc.Height = UINT(metadata.height);                           // 高さ
-	resourceDesc.MipLevels = UINT16(metadata.miscFlags);                   // 数
-	resourceDesc.DepthOrArraySize = UINT(metadata.arraySize);              // 奥行き　Textureの配置数
-	resourceDesc.Format = metadata.format;                                 // format
-	resourceDesc.SampleDesc.Count = 1;                                     // サンプリングカウント(1固定)
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension); // textureの次元数
-
-	// 利用するHeapの設定
-	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-
-	// Resouceの生成
-	ID3D12Resource* resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&resource));
-	assert(SUCCEEDED(hr));
-	return resource;
-}
-
-ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata) {
-
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Width = UINT(metadata.width);                             // 幅
-	resourceDesc.Height = UINT(metadata.height);                           // 高さ
-	resourceDesc.MipLevels = UINT16(metadata.miscFlags);                   // 数
-	resourceDesc.DepthOrArraySize = UINT(metadata.arraySize);              // 奥行き　Textureの配置数
-	resourceDesc.Format = metadata.format;                                 // format
-	resourceDesc.SampleDesc.Count = 1;                                     // サンプリングカウント(1固定)
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension); // textureの次元数
-
-	// 利用するHeapの設定
-	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-
-	// Resouceの生成
-	ID3D12Resource* resource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&resource));
-	assert(SUCCEEDED(hr));
-	return resource;
-}
+//ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata) {
+//
+//	D3D12_RESOURCE_DESC resourceDesc{};
+//	resourceDesc.Width = UINT(metadata.width);                             // 幅
+//	resourceDesc.Height = UINT(metadata.height);                           // 高さ
+//	resourceDesc.MipLevels = UINT16(metadata.miscFlags);                   // 数
+//	resourceDesc.DepthOrArraySize = UINT(metadata.arraySize);              // 奥行き　Textureの配置数
+//	resourceDesc.Format = metadata.format;                                 // format
+//	resourceDesc.SampleDesc.Count = 1;                                     // サンプリングカウント(1固定)
+//	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension); // textureの次元数
+//
+//	// 利用するHeapの設定
+//	D3D12_HEAP_PROPERTIES heapProperties{};
+//	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;
+//	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
+//	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
+//
+//	// Resouceの生成
+//	ID3D12Resource* resource = nullptr;
+//	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&resource));
+//	assert(SUCCEEDED(hr));
+//	return resource;
+//}
 
 #pragma region Vector
 struct Vector2 {
@@ -742,22 +720,22 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descrip
 
 
 
-void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
-
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-
-	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
-		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-		HRESULT hr = texture->WriteToSubresource(
-		    UINT(mipLevel),
-		    nullptr,              // 全領域へコピー
-		    img->pixels,          // 元データアドレス
-		    UINT(img->rowPitch),  // 1ラインサイズ
-		    UINT(img->slicePitch) // 1枚サイズ
-		);
-		assert(SUCCEEDED(hr));
-	}
-}
+//void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
+//
+//	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
+//
+//	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
+//		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
+//		HRESULT hr = texture->WriteToSubresource(
+//		    UINT(mipLevel),
+//		    nullptr,              // 全領域へコピー
+//		    img->pixels,          // 元データアドレス
+//		    UINT(img->rowPitch),  // 1ラインサイズ
+//		    UINT(img->slicePitch) // 1枚サイズ
+//		);
+//		assert(SUCCEEDED(hr));
+//	}
+//}
 
 
 
@@ -1095,8 +1073,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//std::memcpy(vertexDataModel, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
 	// textureを読んで転送
-	DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
-	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
+	/*DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
+	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();*/
 
 	// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
 	//Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CreateTextureResource(device.Get(), metadata2);
@@ -1110,11 +1088,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
 
 	// metadataを基にSRVの設定
-	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
+	/*D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
 	srvDesc2.Format = metadata2.format;
 	srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
+	srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);*/
 
 
 	// マテリアル用のリソース
@@ -1153,12 +1131,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//materialDateSprite->enableLighting = false;
 	//materialDateSprite->uvTransform = MakeIdentity4x4();
 
-	D3D12_RECT scissorRect{};
 
-	scissorRect.left = 0;
-	scissorRect.right = WinApp::kClientWidth;
-	scissorRect.top = 0;
-	scissorRect.bottom = WinApp::kClientHeight;
 
 	Transform transform{
 	    {1.0f, 1.0f, 1.0f},
@@ -1346,7 +1319,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 		//		commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
 		//
-		//		commandList->RSSetScissorRects(1, &scissorRect);
+		//		
 		//		commandList->SetGraphicsRootSignature(rootSignature.Get());
 		//		commandList->SetPipelineState(graphicsPipelineState.Get());
 		//		commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

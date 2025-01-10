@@ -1,11 +1,18 @@
-//#pragma once
-//#include <d3d12.h>
-//#include <dxgi1_6.h>
-//#include <wrl.h>
+#include <cassert>
+#include "Logger.h"
+#include <format>
+#include "StringUtility.h"
+#include <d3d12.h>
+#include <dxgi1_6.h>
+#pragma comment(lib, "d3d12.lib")
+#pragma comment(lib, "dxgi.lib")
+#include "externals/DirectXTex/DirectXTex.h"
+#include <dxcapi.h>
+#include "externals/imgui/imgui.h"
+#include "externals/imgui/imgui_impl_dx12.h"
+#include "externals/imgui/imgui_impl_win32.h"
+
 #include "WinApp.h"
-//#include "externals/imgui/imgui.h"
-//#include "externals/imgui/imgui_impl_dx12.h"
-//#include "externals/imgui/imgui_impl_win32.h"
 #include<d3d12.h>
 #include<dxgi1_6.h>
 #include<wrl.h>
@@ -35,6 +42,8 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
+
+
 private:
 	void DeviceInitialize();              //デバイス
 	
@@ -60,6 +69,7 @@ private:
 		
 
 private://メンバ変数
+	HRESULT hr;
 //------------------------------Device--------------------------------------//
 	//DirectX12デバイス
 	Microsoft::WRL::ComPtr<ID3D12Device> device/* = nullptr*/;
@@ -103,9 +113,9 @@ private://メンバ変数
 	uint32_t descriptorSizeRTV = 1280;
 	uint32_t descriptorSizeDSV = 1280;
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap = nullptr;
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2 = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
 
 //------------------------------------------------------------------//
 
@@ -135,11 +145,6 @@ private://メンバ変数
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2;
 
-	
-
-	
-
-	
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
 	//マテリアル
