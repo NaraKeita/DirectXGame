@@ -8,5 +8,4 @@ struct Vector4 final {
 	float y;
 	float z;
 	float w;
-	
 };

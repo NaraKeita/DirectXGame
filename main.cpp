@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <WRL.h>
+#include <numbers>
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
@@ -21,7 +22,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "dxcompiler.lib")
+#pragma comment(lib, "dxcompiler.lib")	
 
 std::wstring ConvertString(const std::string& str) {
 	if (str.empty()) {
@@ -115,7 +116,7 @@ struct Vector4 {
 	float x;
 	float y;
 	float z;
-	float s;
+	float w;
 };
 
 struct Matrix3x3 {
@@ -501,36 +502,78 @@ VertexData AddVert(const VertexData& v1, const VertexData& v2) {
 	result.position.x = v1.position.x + v2.position.x;
 	result.position.y = v1.position.y + v2.position.y;
 	result.position.z = v1.position.z + v2.position.z;
-	result.position.s = v1.position.s + v2.position.s;
+	result.position.w = v1.position.w + v2.position.w;
 	result.texcoord.x = v1.texcoord.x + v2.texcoord.x;
 	result.texcoord.y = v1.texcoord.y + v2.texcoord.y;
 	return result;
 }
 
-void DrawSphere(VertexData* vertexDataSphere) {
+const uint32_t kSubdivision = 16;
+const uint32_t kVertexCount = kSubdivision * kSubdivision * 6; // 球体頂点数
 
-	const uint32_t kSubdivision = 16;
+// 球体用頂点
+const float kPi = std::numbers::pi_v<float>;
+const float kLonEvery = kPi * 2.0f / float(kSubdivision);
+const float kLatEvery = kPi / float(kSubdivision);
 
-	float pi = float(M_PI);
+void DrawSphere(VertexData* vertexData) {
 
-	const float kLonEvery = pi * 2.0f / float(kSubdivision);
-	const float kLatEvery = pi / float(kSubdivision);
+	
 
-	VertexData vertexDataBkaraA[kSubdivision]{};
+	//float pi = float(M_PI);
+
+	
+
+	/*VertexData vertexDataBkaraA[kSubdivision]{};
 	VertexData vertexDataCkaraA[kSubdivision]{};
 	VertexData vertexDataDkaraA[kSubdivision][kSubdivision]{};
 	VertexData vertexDataDkaraC[kSubdivision]{};
-	VertexData vertexDataDkaraB[kSubdivision]{};
+	VertexData vertexDataDkaraB[kSubdivision]{};*/
 
 	for (uint32_t latIndex = 0; latIndex < kSubdivision; ++latIndex) {
-		float lat = -pi / 2.0f + kLatEvery * latIndex; // 緯度 シ－タ
+		float lat = -kPi / 2.0f + kLatEvery * latIndex; // 緯度 シ－タ
 
 		for (uint32_t lonIndex = 0; lonIndex < kSubdivision; ++lonIndex) {
 
 			uint32_t start = (latIndex * kSubdivision + lonIndex) * 6;
 			float lon = lonIndex * kLonEvery; // 経度　ファイ
+			//a
+			vertexData[start].position.x = cos(lat) * cos(lon);
+			vertexData[start].position.y = sin(lat);
+			vertexData[start].position.z = cos(lat) * sin(lon);
+			vertexData[start].position.w = 1.0f;
+			vertexData[start].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[start].texcoord.y = 1.0f - float(lonIndex) / float(kSubdivision);
 
-			VertexData vertA{};
+			//b
+			vertexData[start + 1].position.x = cos(lat + kLatEvery) * cos(lon);
+			vertexData[start + 1].position.y = sin(lat + kLatEvery);
+			vertexData[start + 1].position.z = cos(lat + kLatEvery) * sin(lon);
+			vertexData[start + 1].position.w = 1.0f;
+			vertexData[start + 1].texcoord.x = float(lonIndex) / float(kSubdivision);
+			vertexData[start + 1].texcoord.y = 1.0f - float(lonIndex + 1) / float(kSubdivision);
+
+			//c
+			vertexData[start + 2].position.x = cos(lat) * cos(lon + kLatEvery);
+			vertexData[start + 2].position.y = sin(lat);
+			vertexData[start + 2].position.z = cos(lat) * sin(lon + kLatEvery);
+			vertexData[start + 2].position.w = 1.0f;
+			vertexData[start + 2].texcoord.x = float(lonIndex + 1) / float(kSubdivision);
+			vertexData[start + 2].texcoord.y = 1.0f - float(lonIndex) / float(kSubdivision);
+
+			//c
+			vertexData[start + 3] = vertexData[start + 2];
+			//b
+			vertexData[start + 4] = vertexData[start + 1];
+			//d
+			vertexData[start + 5].position.x = cos(lat + kLatEvery) * cos(lon + kLatEvery);
+			vertexData[start + 5].position.y = sin(lat + kLatEvery);
+			vertexData[start + 5].position.z = cos(lat + kLatEvery) * sin(lon + kLatEvery);
+			vertexData[start + 5].position.w = 1.0f;
+			vertexData[start + 5].texcoord.x = float(lonIndex + 1) / float(kSubdivision);
+			vertexData[start + 5].texcoord.y = 1.0f - float(lonIndex + 1) / float(kSubdivision);
+
+			/*VertexData vertA{};
 			vertA.position = {std::cos(lat) * std::cos(lon), std::sin(lat), std::cos(lat) * std::sin(lon), 1.0f};
 			vertA.texcoord = {float(lonIndex) / float(kSubdivision), 1.0f - float(latIndex) / float(kSubdivision)};
 			vertA.normal = {0.0f, 0.0f, -1.0f};
@@ -548,23 +591,23 @@ void DrawSphere(VertexData* vertexDataSphere) {
 			VertexData vertD{};
 			vertD.position = {std::cos(lat + kLatEvery) * std::cos(lon + kLonEvery), std::sin(lat + kLatEvery), std::cos(lat + kLatEvery) * std::sin(lon + kLonEvery), 1.0f};
 			vertD.texcoord = {float(lonIndex + 1) / float(kSubdivision), 1.0f - float(latIndex + 1) / float(kSubdivision)};
-			vertD.normal = {0.0f, 0.0f, -1.0f};
+			vertD.normal = {0.0f, 0.0f, -1.0f};*/
 
 			// 最初点
-			vertexDataSphere[start + 0] = vertA;
+			/*vertexDataSphere[start + 0] = vertA;
 			vertexDataSphere[start + 1] = vertB;
 			vertexDataSphere[start + 2] = vertC;
 
 			vertexDataSphere[start + 3] = vertC;
 			vertexDataSphere[start + 4] = vertB;
-			vertexDataSphere[start + 5] = vertD;
+			vertexDataSphere[start + 5] = vertD;*/
 		}
 	}
 
 	for (uint32_t index = 0; index < kSubdivision * kSubdivision * 6; index++) {
-		vertexDataSphere[index].normal.x = vertexDataSphere[index].position.x;
-		vertexDataSphere[index].normal.y = vertexDataSphere[index].position.y;
-		vertexDataSphere[index].normal.z = vertexDataSphere[index].position.z;
+		vertexData[index].normal.x = vertexData[index].position.x;
+		vertexData[index].normal.y = vertexData[index].position.y;
+		vertexData[index].normal.z = vertexData[index].position.z;
 	}
 }
 
@@ -596,7 +639,7 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 		if (identifier == "v") {
 			Vector4 position;
 			s >> position.x >> position.y >> position.z; // 左から順に消費 = 飛ばしたりはできない
-			position.s = 1.0f;
+			position.w = 1.0f;
 
 			// 反転
 			position.x *= 1.0f;
@@ -1024,7 +1067,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	device->CreateShaderResourceView(textureResource2, &srvDesc2, textureSrvHandleCPU2);
 
 	// textureを読んで転送
-	DirectX::ScratchImage mipImages = LoadTexture("resource/uvChecker.png");
+	DirectX::ScratchImage mipImages = LoadTexture("resource/monsterBall.png");
 	//DirectX::ScratchImage mipImages = LoadTexture("resource/fence/fence.png");
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
 	ID3D12Resource* textureResource = CrateTextureResource(device, metadata);
@@ -1624,7 +1667,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			commandList->SetGraphicsRootConstantBufferView(3, directionalLightSphereResource->GetGPUVirtualAddress());
 			commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
-			commandList->DrawInstanced(UINT(modelData.vertices.size()), kNumInstance, 0, 0);
+			commandList->DrawInstanced(/*UINT(modelData.vertices.size())*/kVertexCount, kNumInstance, 0, 0);
 
 			// UI
 			// Spriteの描画。変更が必要なものだけ変更する
