@@ -521,6 +521,7 @@ struct Material {
 struct TransformationMatrix {
 	Matrix4x4 WVP;
 	Matrix4x4 World;
+	Vector4 Color;
 };
 
 struct ParticleForGPU {

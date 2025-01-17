@@ -8,7 +8,7 @@ struct ParticleForGPU
 {
     float32_t4x4 WVP;
     float32_t4x4 World;
-    float32_t4x4 color;
+    float32_t4 color;
 };
 
 //ConstantBuffer<TransformationMatrix> gTranfsformationMatrix : register(b0);
