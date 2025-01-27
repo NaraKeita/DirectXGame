@@ -172,7 +172,7 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	CommandInitialize();
 	SwapChainInitialize();
 	ZBufferInitialize();
-	DescriptorHeapInitialize(shaderVisible);
+	DescriptorHeapInitialize();
 	//CreateAllDescriptorHeap();
 	RenderTargetInitialize();
 	
@@ -361,7 +361,7 @@ void DirectXCommon::SwapChainInitialize() {
 }
 
 //デスクリプタヒープ
-void DirectXCommon::DescriptorHeapInitialize(bool shaderVisible) {
+void DirectXCommon::DescriptorHeapInitialize() {
 #pragma region ディスクリプターヒープの生成
 	//RTV用のDescriptorSizeを取得しておく
 	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -376,8 +376,7 @@ void DirectXCommon::DescriptorHeapInitialize(bool shaderVisible) {
 	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
 	rtvDescriptorHeapDesc.NumDescriptors = 2;
-	//rtvDescriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
+	
 	 hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
 	assert(SUCCEEDED(hr));
 
@@ -387,8 +386,7 @@ void DirectXCommon::DescriptorHeapInitialize(bool shaderVisible) {
 	D3D12_DESCRIPTOR_HEAP_DESC srvDescriptorHeapDesc{};
 	srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 	srvDescriptorHeapDesc.NumDescriptors = 2;
-	//srvDescriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
+	
 	hr = device->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap));
 	assert(SUCCEEDED(hr));
 
@@ -396,8 +394,7 @@ void DirectXCommon::DescriptorHeapInitialize(bool shaderVisible) {
 	D3D12_DESCRIPTOR_HEAP_DESC dsvDescriptorHeapDesc{};
 	dsvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 	dsvDescriptorHeapDesc.NumDescriptors = 2;
-	//dsvDescriptorHeapDesc.Flags = shaderVisible ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-
+	
 	hr = device->CreateDescriptorHeap(&dsvDescriptorHeapDesc, IID_PPV_ARGS(&dsvDescriptorHeap));
 	assert(SUCCEEDED(hr));
 #pragma endregion
@@ -468,17 +465,6 @@ void DirectXCommon::DescriptorHeapInitialize(bool shaderVisible) {
 	//device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
 	#pragma endregion
 }
-
-//void DirectXCommon::CreateAllDescriptorHeap() {
-//	descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-//	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-//	descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-//
-//	rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-//	srvDescriptorHeap = CreateDescriptorHeap(device.Get(),D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
-//	dsvDescriptorHeap = CreateDescriptorHeap(device.Get(),D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-//
-//}
 
 //レンダーターゲット
 void DirectXCommon::RenderTargetInitialize() {
@@ -681,21 +667,6 @@ D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetRTVGPUDescriptorHandle(uint32_t in
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetDSVGPUDescriptorHandle(uint32_t index) {
 	return GetGPUDescriptorHandle(dsvDescriptorHeap, descriptorSizeDSV, index);
 }
-
-//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDesciptors, bool shaderVisible) {
-//	
-//	
-//	
-//	
-//	
-//	
-//
-//	
-//
-//	
-//	
-//	
-//}
 
 //深度バッファ
 void DirectXCommon::ZBufferInitialize() {

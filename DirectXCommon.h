@@ -46,14 +46,12 @@ public:
 
 private:
 
-	bool shaderVisible;
-
 	void DeviceInitialize();              //デバイス
 	
 	void CommandInitialize();             // コマンド関連
 	void SwapChainInitialize();           // スワップチェイン
 	//void ZBufferInitialize();             
-	void DescriptorHeapInitialize(bool shaderVisible); // デスクリプタヒープ
+	void DescriptorHeapInitialize(); // デスクリプタヒープ
 
 	//void CreateAllDescriptorHeap();
 
