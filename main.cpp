@@ -20,6 +20,8 @@
 #include "DirectXCommon.h"
 
 //extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -739,30 +741,42 @@ D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ID3D12DescriptorHeap* descrip
 
 
 
-//// ウィンドウプロシージャ
-//LRESULT CALLBACK WindowProc(
-//    HWND hwnd, UINT msg,
-//
-//    WPARAM wparam, LPARAM lparam) {
-//	// メッセージに応じてゲーム固有の処理を行う
-//	switch (msg) {
-//		// ウィンドウが破壊された
-//	case WM_DESTROY:
-//		// OSに対して、アプリの終了を伝える
-//		PostQuitMessage(0);
-//		return 0;
-//	}
-//
-//	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
-//		return true;
-//	}
-//
-//	// 標準のメッセージ処理を行う
-//	return DefWindowProc(hwnd, msg, wparam, lparam);
-//}
+// ウィンドウプロシージャ
+LRESULT CALLBACK WindowProc(
+    HWND hwnd, UINT msg,
+
+    WPARAM wparam, LPARAM lparam) {
+	// メッセージに応じてゲーム固有の処理を行う
+	switch (msg) {
+		// ウィンドウが破壊された
+	case WM_DESTROY:
+		// OSに対して、アプリの終了を伝える
+		PostQuitMessage(0);
+		return 0;
+	}
+
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+		return true;
+	}
+
+	// 標準のメッセージ処理を行う
+	return DefWindowProc(hwnd, msg, wparam, lparam);
+}
 
 // Windowsアプリのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+
+	// ポインタ
+	WinApp* winApp = nullptr;
+	// WindowsAPIの初期化
+	winApp = new WinApp();
+	winApp->Initialize();
+	// ポインタ
+	DirectXCommon* dxCommon = nullptr;
+	// DirectXの初期化
+	dxCommon = new DirectXCommon();
+	dxCommon->Initialize(winApp);
+
 	struct D3DResourceLeakChecker {
 		~D3DResourceLeakChecker() {
 			// リソースリークチェック
@@ -783,16 +797,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion
 
-	// ポインタ
-	WinApp* winApp = nullptr;
-	// WindowsAPIの初期化
-	winApp = new WinApp();
-	winApp->Initialize();
-	// ポインタ
-	DirectXCommon* dxCommon = nullptr;
-	// DirectXの初期化
-	dxCommon = new DirectXCommon();
-	dxCommon->Initialize(winApp);
+	
 
 	Input* input = nullptr;
 	input = new Input();

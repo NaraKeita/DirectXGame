@@ -1,8 +1,6 @@
 #include "DirectXCommon.h"
 
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 using namespace Logger;
 using namespace Microsoft::WRL;
 
@@ -166,10 +164,6 @@ void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mip
 }
 
 void DirectXCommon::Initialize(WinApp* winApp) {
-	// NULL検出
-	assert(winApp);
-	// メンバ変数に記録
-	this->winApp = winApp;
 
 	DeviceInitialize();
 	CommandInitialize();
@@ -203,6 +197,10 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	/*assert(device != nullptr);
 	log("Complete create D3D12Device!!!\n");*/
 
+	// NULL検出
+	assert(winApp);
+	// メンバ変数に記録
+	this->winApp = winApp;
 }
 
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
