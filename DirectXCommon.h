@@ -70,6 +70,8 @@ private:
 		
 
 private://メンバ変数
+	bool shaderVisible;
+
 	HRESULT hr;
 //------------------------------Device--------------------------------------//
 	//DirectX12デバイス
