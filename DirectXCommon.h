@@ -70,7 +70,7 @@ private:
 		
 
 private://メンバ変数
-	bool shaderVisible;
+	
 
 	HRESULT hr;
 //------------------------------Device--------------------------------------//

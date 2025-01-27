@@ -766,6 +766,25 @@ LRESULT CALLBACK WindowProc(
 // Windowsアプリのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
+	WNDCLASS wc{};
+	//ウィンドウプロシージャ
+	wc.lpfnWndProc = WindowProc;
+	//ウィンドウクラス
+	wc.lpszClassName = L"CG2WindowClass";
+	//インスタンスハンドル
+	wc.hInstance = GetModuleHandle(nullptr);
+	//カーソル
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+
+	//ウィンドウクラスを登録する
+	RegisterClass(&wc);
+
+	//クライアント領域のサイズ
+	const int32_t kClientWidth = 1280;
+	const int32_t kClientHeight = 720;
+
+
+
 	struct D3DResourceLeakChecker {
 		~D3DResourceLeakChecker() {
 			// リソースリークチェック
