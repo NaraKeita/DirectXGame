@@ -766,17 +766,6 @@ LRESULT CALLBACK WindowProc(
 // Windowsアプリのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
-	// ポインタ
-	WinApp* winApp = nullptr;
-	// WindowsAPIの初期化
-	winApp = new WinApp();
-	winApp->Initialize();
-	// ポインタ
-	DirectXCommon* dxCommon = nullptr;
-	// DirectXの初期化
-	dxCommon = new DirectXCommon();
-	dxCommon->Initialize(winApp);
-
 	struct D3DResourceLeakChecker {
 		~D3DResourceLeakChecker() {
 			// リソースリークチェック
@@ -797,11 +786,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion
 
-	
+	// ポインタ
+	WinApp* winApp = nullptr;
+	// WindowsAPIの初期化
+	winApp = new WinApp();
+	winApp->Initialize();
 
 	Input* input = nullptr;
 	input = new Input();
 	input->Initialize(winApp);
+
+	// ポインタ
+	DirectXCommon* dxCommon = nullptr;
+	// DirectXの初期化
+	dxCommon = new DirectXCommon();
+	dxCommon->Initialize(winApp);
 
 	// #pragma region DirectX初期化処理
 	//
@@ -1196,10 +1195,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			break;
 		}
 
-		//// ゲームの処理
-		//ImGui_ImplDX12_NewFrame();
-		//ImGui_ImplWin32_NewFrame();
-		//ImGui::NewFrame();
+		// ゲームの処理
+		ImGui_ImplDX12_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+
 		ImGui::Begin("Window"); 
 		// ここにテキストを入れられる
 		ImGui::Text("ImGuiText");
@@ -1253,7 +1253,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//materialDateSprite->uvTransform = uvTransformMatrix;
 
 		// 開発用UIの処理
-		// ImGui::ShowDemoWindow();
+		 ImGui::ShowDemoWindow();
 		// ImGui::Begin("Settings");
 		// ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
 
@@ -1293,7 +1293,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 		//// ImGuiの内部コマンド
-		// ImGui::Render();
+		 ImGui::Render();
 		//// 　これから書き込みバックバッファのインデックスを取得
 		// UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 		//// TransitionBarrierの設定
@@ -1392,9 +1392,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// delete input;
 
 		//
-		// ImGui_ImplDX12_Shutdown();
-		// ImGui_ImplWin32_Shutdown();
-		// ImGui::DestroyContext();
+		 ImGui_ImplDX12_Shutdown();
+		 ImGui_ImplWin32_Shutdown();
+		 ImGui::DestroyContext();
 		// CloseHandle(fenceEvent);
 		// fence->Release();
 		// rtvDescriptorHeap->Release();

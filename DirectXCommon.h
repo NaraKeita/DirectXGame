@@ -32,7 +32,7 @@ public:
 	//Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(ID3D12Device* device, D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
-
+	
 	// 指定番号のCPUデスクリプタハンドルを取得する
 	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
 	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
@@ -45,12 +45,15 @@ public:
 
 
 private:
+
+	bool shaderVisible;
+
 	void DeviceInitialize();              //デバイス
 	
 	void CommandInitialize();             // コマンド関連
 	void SwapChainInitialize();           // スワップチェイン
 	//void ZBufferInitialize();             
-	void DescriptorHeapInitialize();      // デスクリプタヒープ
+	void DescriptorHeapInitialize(bool shaderVisible); // デスクリプタヒープ
 
 	//void CreateAllDescriptorHeap();
 
