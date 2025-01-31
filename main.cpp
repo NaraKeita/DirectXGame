@@ -507,9 +507,11 @@ VertexData AddVert(const VertexData& v1, const VertexData& v2) {
 	return result;
 }
 
+
+
 void DrawSphere(VertexData* vertexDataSphere) {
 
-	const uint32_t kSubdivision = 16;
+	
 
 	float pi = float(M_PI);
 
@@ -630,8 +632,8 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 				Vector4 position = positions[elementIndices[0] - 1];
 				Vector2 texcoord = texcoords[elementIndices[1] - 1];
 				Vector3 normal = normals[elementIndices[2] - 1];
-				// VertexData vertex = { position,texcoord,normal };
-				// modelData.vertices.push_back(vertex);
+				VertexData vertex = { position,texcoord,normal };
+				modelData.vertices.push_back(vertex);
 
 				triangle[faceVertex] = {position, texcoord, normal};
 			}
@@ -1263,13 +1265,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion
 
-	uint32_t SphereVertexNum = 16 * 16 * 6;
+	const uint32_t kSubdivision = 16;
+	const uint32_t kVertexCount = kSubdivision * kSubdivision * 6;
 
 	// Sphere
-	ID3D12Resource* vertexResourceSphere = CreateBufferResource(device, sizeof(VertexData) * SphereVertexNum);
+	ID3D12Resource* vertexResourceSphere = CreateBufferResource(device, sizeof(VertexData) * kVertexCount);
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSphere{};
 	vertexBufferViewSphere.BufferLocation = vertexResourceSphere->GetGPUVirtualAddress();
-	vertexBufferViewSphere.SizeInBytes = sizeof(VertexData) * SphereVertexNum;
+	vertexBufferViewSphere.SizeInBytes = sizeof(VertexData) * kVertexCount;
 	vertexBufferViewSphere.StrideInBytes = sizeof(VertexData);
 	ID3D12Resource* wvpResourceSphere = CreateBufferResource(device, sizeof(TransformationMatrix));
 	TransformationMatrix* wvpDateSphere = nullptr;
@@ -1325,7 +1328,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//instancing
 
 	// Resourceの作成
-	const uint32_t kNumInstance = 10; // インスタンス数
+	const uint32_t kNumInstance = 1; // インスタンス数
 	// Instance用のTransformationMatrixリソースを作る
 	Microsoft::WRL::ComPtr<ID3D12Resource> instancingResource = CreateBufferResource(device, sizeof(TransformationMatrix) * kNumInstance);
 	// 書き込むためのアドレスを取得
