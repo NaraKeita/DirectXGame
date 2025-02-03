@@ -42,7 +42,8 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
-
+	//getter
+	ID3D12Device* GetDevice() const { return device.Get(); }
 
 private:
 
