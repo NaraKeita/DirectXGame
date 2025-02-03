@@ -483,7 +483,6 @@ void DirectXCommon::RenderTargetInitialize() {
 
 	// RTV用の設定
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvStartHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(); 
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 
 	//rtvHandles[0] = rtvStartHandle;
 
@@ -586,9 +585,7 @@ void DirectXCommon::FenceInitialize() {
 
 //ビューポート
 void DirectXCommon::ViewportInitialize() {
-	// ビューポート
-	D3D12_VIEWPORT viewport;
-
+	
 	viewport.Width = WinApp::kClientWidth;
 	viewport.Height = WinApp::kClientHeight;
 	viewport.TopLeftX = 0;
@@ -601,8 +598,7 @@ void DirectXCommon::ViewportInitialize() {
 
 //シザリング矩形
 void DirectXCommon::ScissoringInitialize() {
-	D3D12_RECT scissorRect{};
-
+	
 	scissorRect.left = 0;
 	scissorRect.right = WinApp::kClientWidth;
 	scissorRect.top = 0;
@@ -702,6 +698,74 @@ void DirectXCommon::ZBufferInitialize() {
 		IID_PPV_ARGS(&resource));
 
 	assert(SUCCEEDED(hr));
+}
+
+void DirectXCommon::PreDraw() {
+#pragma region バックバッファの番号取得
+	// これから書き込みバックバッファのインデックスを取得
+	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+#pragma endregion
+
+#pragma region リソースバリアで書き込み可能に変更
+	// 今回のバリアはTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを貼る対象のリソース。現在のバッファに対して行う
+	barrier.Transition.pResource = swapChainResource[backBufferIndex].Get();
+	// 前の(現在の)ResourceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	// 後のResourceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+#pragma endregion
+
+#pragma region 描画先のRTVとDSVを指定する
+	// 描画先のRTVの設定をする
+	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
+	// DSV
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
+#pragma endregion
+
+#pragma region 画面全体の色をクリア
+	// 指定した色で画面をクリアする　
+	float clearColor[] = {0.1f, 0.25f, 0.5f, 1.0f};
+#pragma endregion
+
+#pragma region 画面全体の深度をクリア
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	// コマンド蓄積
+	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	commandList->RSSetViewports(1, &viewport);
+	commandList->RSSetScissorRects(1, &scissorRect);
+#pragma endregion
+
+	// SRVを作成するDescriptorHeap場所決め
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
+
+	
+
+#pragma region SRV用のデスクリプタヒープを指定する
+	// 描画用のDescriptorHeap
+	ID3D12DescriptorHeap* descriptorHeaps[] = {srvDescriptorHeap.Get()};
+	commandList->SetDescriptorHeaps(1, descriptorHeaps);
+#pragma endregion
+
+#pragma region ビューポート領域の設定
+	
+#pragma endregion 
+
+#pragma region シザー矩形の設定
+	
+#pragma endregion
+}
+
+void DirectXCommon::PostDraw() {
+
 }
 
 //void DirextXCommon::ZBuffer() {

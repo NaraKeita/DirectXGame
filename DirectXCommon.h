@@ -68,7 +68,11 @@ private:
 	void DXCCompilerInitialize();         //DCXコンパイラの生成
 	void ImGuiInitialize();               //ImGuiの初期化
 	void ZBufferInitialize();             // 深度バッファ
-		
+	
+	//描画前処理
+    void PreDraw();
+	//描画後処理
+	void PostDraw();
 
 private://メンバ変数
 	
@@ -138,7 +142,19 @@ private://メンバ変数
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU;
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU;
 
+	//-----------------------------------------------------------//
 	
+	// TransitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+
+	//------------------------------------------------------------//
+
+	// ビューポート
+	D3D12_VIEWPORT viewport;
+
+	D3D12_RECT scissorRect{};
+
 
 	//ID3D12Resource* resource = nullptr;
 
