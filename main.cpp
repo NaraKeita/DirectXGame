@@ -1288,6 +1288,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		 ImGui::Begin("Settings");
 		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
 		 ImGui::End();
+
 		//-------------入力デバイス追加-----------------//
 
 		// for (int i = 0; i < 256; i++) {
