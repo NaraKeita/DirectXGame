@@ -795,7 +795,10 @@ void DirectXCommon::PostDraw() {
 #pragma endregion
 
 #pragma region Fenceの値を通知
-	
+	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	assert(SUCCEEDED(hr));
+	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
 #pragma endregion
 
 #pragma region コマンドキューにシグナルを送る
