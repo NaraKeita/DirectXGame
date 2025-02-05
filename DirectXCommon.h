@@ -45,6 +45,11 @@ public:
 	//getter
 	ID3D12Device* GetDevice() const { return device.Get(); }
 
+	// 描画前処理
+	void PreDraw();
+	// 描画後処理
+	void PostDraw();
+
 private:
 
 	void DeviceInitialize();              //デバイス
@@ -69,10 +74,7 @@ private:
 	void ImGuiInitialize();               //ImGuiの初期化
 	void ZBufferInitialize();             // 深度バッファ
 	
-	//描画前処理
-    void PreDraw();
-	//描画後処理
-	void PostDraw();
+	
 
 private://メンバ変数
 	
@@ -129,6 +131,7 @@ private://メンバ変数
 
 //--------------------------------fence-------------------------------//
 	// フェンスの初期化
+	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	Microsoft::WRL::ComPtr<ID3D12Fence> fence = nullptr;
 	uint32_t fenceValue = 0;
 	

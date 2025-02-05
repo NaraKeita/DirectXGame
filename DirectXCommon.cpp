@@ -579,7 +579,6 @@ void DirectXCommon::FenceInitialize() {
 	 hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 	assert(SUCCEEDED(hr));
 
-	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
 }
 
@@ -743,11 +742,14 @@ void DirectXCommon::PreDraw() {
 	commandList->RSSetScissorRects(1, &scissorRect);
 #pragma endregion
 
-	// SRVを作成するDescriptorHeap場所決め
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
+#pragma region SRV用のデスクリプタヒープを指定する
+// SRVを作成するDescriptorHeap場所決め
+D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
+D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
 
-	
+barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+#pragma endregion
 
 #pragma region SRV用のデスクリプタヒープを指定する
 	// 描画用のDescriptorHeap
@@ -756,16 +758,74 @@ void DirectXCommon::PreDraw() {
 #pragma endregion
 
 #pragma region ビューポート領域の設定
-	
-#pragma endregion 
+	commandList->RSSetViewports(1, &viewport);
+#pragma endregion
 
 #pragma region シザー矩形の設定
-	
+	commandList->RSSetScissorRects(1, &scissorRect);
 #pragma endregion
 }
 
 void DirectXCommon::PostDraw() {
+#pragma region バックバッファの番号取得
+	// これから書き込みバックバッファのインデックスを取得
+	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+#pragma endregion
 
+#pragma region リソースバリアで表示状態に変更
+	// TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+#pragma endregion
+
+#pragma region グラフィックコマンドをクローズ//		
+	// コマンドリストの内容を確定させる。全てのコマンドを積んでからclearする
+	hr = commandList->Close();
+	assert(SUCCEEDED(hr));
+#pragma endregion
+
+#pragma region GPUコマンドの実行
+	// GPUにコマンドリストの実行を行わせる
+	ID3D12CommandList* commandLists[] = {commandList.Get()};
+	commandQueue->ExecuteCommandLists(1, commandLists);
+#pragma endregion
+
+#pragma region GPU画面の交換を通知
+	// GPUとOSに画面の交換を行うように通知する
+	swapChain->Present(1, 0);
+#pragma endregion
+
+#pragma region Fenceの値を通知
+	// FENCEを更新する
+	fenceValue++;
+	commandQueue->Signal(fence.Get(), fenceValue);
+
+	if (fence->GetCompletedValue() < fenceValue) {
+
+		fence->SetEventOnCompletion(fenceValue, fenceEvent);
+
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
+#pragma endregion
+
+#pragma region コマンドキューにシグナルを送る
+
+#pragma endregion
+
+#pragma region コマンド完了待ち
+
+#pragma endregion
+
+#pragma region コマンドアロケータのリセット
+	// 次のフレームのコマンドリストを準備
+	hr = commandAllocator->Reset();
+	assert(SUCCEEDED(hr));
+#pragma endregion
+
+#pragma region コマンドリストのリセット
+	// 次のフレームのコマンドリストを準備
+	hr = commandList->Reset(commandAllocator.Get(), nullptr);
+	assert(SUCCEEDED(hr));
+#pragma endregion
 }
 
 //void DirextXCommon::ZBuffer() {

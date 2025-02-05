@@ -974,7 +974,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//// shaderのコンパイラ
 	// Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(L"resource/shaders/Object3d.VS.hlsl", L"vs_6_0", dxcUtils, dxcCompiler, includeHandler);
-	//
+	
 	// assert(vertexShaderBlob != nullptr);
 	// Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"resource/shaders/Object3d.PS.hlsl", L"ps_6_0", dxcUtils, dxcCompiler, includeHandler);
 
@@ -1312,8 +1312,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ImGuiの内部コマンド
 		 ImGui::Render();
 		
-		
-		
+		//描画前処理
+		 dxCommon->PreDraw();
 
 			
 		//		commandList->SetGraphicsRootSignature(rootSignature.Get());
@@ -1346,42 +1346,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//		// 画面に描く処理はすべて終わり、画面に映すので、状況をそうい
 		//		// 今回はResourceTargetからPresentにする
-				barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-				barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-		//		// TransitionBarrierを張る
-		//		commandList->ResourceBarrier(1, &barrier);
-		//		// コマンドリストの内容を確定させる。全てのコマンドを積んでからclearする
-		//		hr = commandList->Close();
-		//		assert(SUCCEEDED(hr));
-		//		// GPUにコマンドリストの実行を行わせる
-		//		ID3D12CommandList* commandLists[] = {commandList.Get()};
-		//		commandQueue->ExecuteCommandLists(1, commandLists);
-		//		// GPUとOSに画面の交換を行うように通知する
-		//		swapChain->Present(1, 0);
+		
 		//		//// 出力ウィンドウへの文字出力
 		//		// OutputDebugStringA("Hello DirectX!\n");
-		//		// FENCEを更新する
-		//		fenceValue++;
-		//		commandQueue->Signal(fence.Get(), fenceValue);
-
-		//		if (fence->GetCompletedValue() < fenceValue) {
-
-		//			fence->SetEventOnCompletion(fenceValue, fenceEvent);
-
-		//			WaitForSingleObject(fenceEvent, INFINITE);
-		//		}
-
-		//		// 次のフレームのコマンドリストを準備
-		//		hr = commandAllocator->Reset();
-		//		assert(SUCCEEDED(hr));
-		//		hr = commandList->Reset(commandAllocator.Get(), nullptr);
-		//		assert(SUCCEEDED(hr));
-		//
+		
 		//}
 	}
 		// delete input;
 
-		//
+		
 		 ImGui_ImplDX12_Shutdown();
 		 ImGui_ImplWin32_Shutdown();
 		 ImGui::DestroyContext();
