@@ -795,15 +795,7 @@ void DirectXCommon::PostDraw() {
 #pragma endregion
 
 #pragma region Fenceの値を通知
-	// FENCEを更新する
-	fenceValue++;
 	
-	if (fence->GetCompletedValue() < fenceValue) {
-
-		fence->SetEventOnCompletion(fenceValue, fenceEvent);
-
-		WaitForSingleObject(fenceEvent, INFINITE);
-	}
 #pragma endregion
 
 #pragma region コマンドキューにシグナルを送る
@@ -811,7 +803,15 @@ void DirectXCommon::PostDraw() {
 #pragma endregion
 
 #pragma region コマンド完了待ち
+	// FENCEを更新する
+	fenceValue++;
 
+	if (fence->GetCompletedValue() < fenceValue) {
+
+		fence->SetEventOnCompletion(fenceValue, fenceEvent);
+
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
 #pragma endregion
 
 #pragma region コマンドアロケータのリセット
