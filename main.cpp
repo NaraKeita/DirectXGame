@@ -1314,7 +1314,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		
 		//描画前処理
 		 dxCommon->PreDraw();
-
 		 //描画後処理
 		 dxCommon->PostDraw();
 			
