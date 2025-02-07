@@ -44,6 +44,7 @@ public:
 
 	//getter
 	ID3D12Device* GetDevice() const { return device.Get(); }
+	ID3D12GraphicsCommandList* GetCommandList() const { return commandList.Get(); }
 
 	// 描画前処理
 	void PreDraw();
@@ -157,6 +158,9 @@ private://メンバ変数
 	D3D12_VIEWPORT viewport;
 
 	D3D12_RECT scissorRect{};
+
+	// ComplierShader関数
+	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile/*, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler*/);
 
 
 	//ID3D12Resource* resource = nullptr;

@@ -68,7 +68,8 @@ using namespace Microsoft::WRL;
 ////	float padding[3]; // 枠確保用06-01 9
 ////	Matrix4x4 uvTransform;
 ////};
-//
+
+
 DirectX::ScratchImage LoadTexture(const std::string& filePath) {
 	// テクスチャファイル // byte関連
 	DirectX::ScratchImage image{};
@@ -632,6 +633,18 @@ void DirectXCommon::ImGuiInitialize() {
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 	    srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
 	);
+}
+
+Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(const std::wstring& filePath, const wchar_t* profile) {
+	// shaderのコンパイラ
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = CompileShader(L"resource/shaders/Object3d.VS.hlsl", L"vs_6_0"/*, dxcUtils, dxcCompiler, includeHandler*/);
+
+	assert(vertexShaderBlob != nullptr);
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = CompileShader(L"resource/shaders/Object3d.PS.hlsl", L"ps_6_0"/*, dxcUtils, dxcCompiler, includeHandler*/);
+
+	assert(pixelShaderBlob != nullptr);
+
+	return Microsoft::WRL::ComPtr<IDxcBlob>();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
