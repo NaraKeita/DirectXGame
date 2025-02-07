@@ -46,6 +46,18 @@ public:
 	ID3D12Device* GetDevice() const { return device.Get(); }
 	ID3D12GraphicsCommandList* GetCommandList() const { return commandList.Get(); }
 
+	//----------------------------------------------------------------------------------------------//
+
+	// リソース生成関数
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+	// 頂点シェーダを作る
+	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
+	D3D12_RESOURCE_DESC vertexResourceDesc{};
+	// 実際に頂点リソースを作る
+	ID3D12Resource* vertexResource = nullptr;
+
+	//----------------------------------------------------------------------------------------------//
+
 	// 描画前処理
 	void PreDraw();
 	// 描画後処理
@@ -54,6 +66,7 @@ public:
 private:
 
 	void DeviceInitialize();              //デバイス
+	void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
 	
 	void CommandInitialize();             // コマンド関連
 	void SwapChainInitialize();           // スワップチェイン
@@ -158,9 +171,19 @@ private://メンバ変数
 	D3D12_VIEWPORT viewport;
 
 	D3D12_RECT scissorRect{};
+//----------------------------------------------------------------------------------------------//
 
 	// ComplierShader関数
 	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile/*, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler*/);
+
+//----------------------------------------------------------------------------------------------//
+
+//----------------------------------------------------------------------------------------------//
+
+	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata);
+
+//----------------------------------------------------------------------------------------------//
+
 
 
 	//ID3D12Resource* resource = nullptr;
@@ -185,4 +208,6 @@ private://メンバ変数
 	// 指定番号のGPUデスクリプタハンドルを取得する
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 	
+	static DirectX::ScratchImage LoadTexture(const std::string& filePath);
+
 };

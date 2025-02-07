@@ -685,29 +685,10 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 	return modelData;
 }
 
-ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
-	// VertexResource
-	// 頂点シェーダを作る
-	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
-	uploadHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
-
-	D3D12_RESOURCE_DESC vertexResourceDesc{};
-
-	vertexResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-	vertexResourceDesc.Width = sizeInBytes;
-	vertexResourceDesc.Height = 1;
-	vertexResourceDesc.DepthOrArraySize = 1;
-	vertexResourceDesc.MipLevels = 1;
-	vertexResourceDesc.SampleDesc.Count = 1;
-	vertexResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-	// 実際に頂点リソースを作る
-	ID3D12Resource* vertexResource = nullptr;
-	HRESULT hr = device->CreateCommittedResource(&uploadHeapProperties, D3D12_HEAP_FLAG_NONE, &vertexResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&vertexResource));
-	assert(SUCCEEDED(hr));
-
-	return vertexResource;
-}
+//ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
+//	
+//	return vertexResource;
+//}
 
 
 
@@ -795,8 +776,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region Windouの生成
 
-	/*HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
-	ShowWindow(hwnd, SW_SHOW);*/
+	HWND hwnd = CreateWindow(wc.lpszClassName, L"CG2", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wrc.right - wrc.left, wrc.bottom - wrc.top, nullptr, nullptr, wc.hInstance, nullptr);
+	ShowWindow(hwnd, SW_SHOW);
 
 #pragma endregion
 
@@ -816,35 +797,35 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(winApp);
 
-	// #pragma region DirectX初期化処理
-	//
-	//	//DirectInputの初期化
-	//	IDirectInput8* directInput = nullptr;
-	//	LRESULT result = DirectInput8Create(
-	//		wc.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
-	//	assert(SUCCEEDED(result));
-	//
-	//	//キーボードデバイスの生成
-	//	IDirectInputDevice8* keyboard = nullptr;
-	//	result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-	//	assert(SUCCEEDED(result));
-	//
-	//	//入力データ形式のセット
-	//	result = keyboard->SetDataFormat(&c_dfDIKeyboard);//標準形式
-	//	assert(SUCCEEDED(result));
-	//
-	//	//排他制御レベルのセット
-	//	result = keyboard->SetCooperativeLevel(
-	//		hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-	//	assert(SUCCEEDED(result));
-	//
-	// #pragma endregion
+	 #pragma region DirectX初期化処理
+	
+		//DirectInputの初期化
+		IDirectInput8* directInput = nullptr;
+		LRESULT result = DirectInput8Create(
+			wc.hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+		assert(SUCCEEDED(result));
+	
+		//キーボードデバイスの生成
+		IDirectInputDevice8* keyboard = nullptr;
+		result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
+		assert(SUCCEEDED(result));
+	
+		//入力データ形式のセット
+		result = keyboard->SetDataFormat(&c_dfDIKeyboard);//標準形式
+		assert(SUCCEEDED(result));
+	
+		//排他制御レベルのセット
+		result = keyboard->SetCooperativeLevel(
+			hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+		assert(SUCCEEDED(result));
+	
+	 #pragma endregion
 
 	// log("Hello,DirectX\n");
 
 #pragma endregion
 
-	//
+	
 	// UploadTextureData(textureResource2.Get(), mipImages2);
 	// Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2 = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
 
@@ -864,7 +845,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//
 	// UploadTextureData(textureResource.Get(), mipImages);
 
-	//
+	
 
 	//// metadataを基にSRVの設定
 	// D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -1006,14 +987,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	uint32_t SphereVertexNum = 16 * 16 * 6;
 
-	//// Sphere
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSphere = CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * SphereVertexNum);
-	//
+	// Sphere
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSphere = dxCommon->CreateBufferResource(sizeof(VertexData) * SphereVertexNum);
+	
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSphere{};
 	vertexBufferViewSphere.BufferLocation = vertexResourceSphere->GetGPUVirtualAddress();
 	vertexBufferViewSphere.SizeInBytes = sizeof(VertexData) * SphereVertexNum;
 	vertexBufferViewSphere.StrideInBytes = sizeof(VertexData);
-	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSphere = CreateBufferResource(dxCommon->GetDevice(), sizeof(TransformationMatrix));
+	Microsoft::WRL::ComPtr<ID3D12Resource> wvpResourceSphere = dxCommon->CreateBufferResource(sizeof(TransformationMatrix));
 
 	TransformationMatrix* wvpDateSphere = nullptr;
 	wvpResourceSphere->Map(0, nullptr, reinterpret_cast<void**>(&wvpDateSphere));
@@ -1022,7 +1003,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexResourceSphere->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSphere));
 
 	// Sprite
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * 4);
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceSprite = dxCommon->CreateBufferResource(sizeof(VertexData) * 4);
 
 	// 頂点バッファービュー
 	 D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite{};
@@ -1032,7 +1013,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	 vertexBufferViewSprite.SizeInBytes = sizeof(VertexData) * 4;
 	// 頂点サイズ
 	 vertexBufferViewSprite.StrideInBytes = sizeof(VertexData);
-	 Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(TransformationMatrix));
+	 Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResourceSprite = dxCommon->CreateBufferResource(sizeof(TransformationMatrix));
 	
 	 TransformationMatrix* transformationMatrixDataSprite = nullptr;
 	 transformationMatrixResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixDataSprite));
@@ -1051,7 +1032,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	 vertexDataSprite[3].texcoord = {1.0f, 0.0f};
 
 	// Sprite
-	 Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(uint32_t) * 6);
+	 Microsoft::WRL::ComPtr<ID3D12Resource> indexResourceSprite = dxCommon->CreateBufferResource(sizeof(uint32_t) * 6);
 	
 	// 頂点バッファービュー
 	 D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
@@ -1073,7 +1054,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// モデルの読み込み
 	ModelData modelData = LoadObjFile("resource", "plane.obj");
-	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceModel = CreateBufferResource(dxCommon->GetDevice(), sizeof(VertexData) * modelData.vertices.size());
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResourceModel = dxCommon->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewModel{};
 	 vertexBufferViewModel.BufferLocation = vertexResourceModel->GetGPUVirtualAddress();
@@ -1105,7 +1086,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 
 	// マテリアル用のリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSphere = CreateBufferResource(dxCommon->GetDevice(), sizeof(Material));
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSphere = dxCommon->CreateBufferResource(sizeof(Material));
 
 	// マテリアルにデータを書き込む
 	Material* materialDateSphere = nullptr;
@@ -1117,7 +1098,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialDateSphere->uvTransform = MakeIdentity4x4();
 
 	// 球体マテリアルのライト用のリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightSphereResource = CreateBufferResource(dxCommon->GetDevice(), sizeof(DirectionalLight));
+	Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightSphereResource = dxCommon->CreateBufferResource(sizeof(DirectionalLight));
 
 	// マテリアルにデータを書き込む
 	DirectionalLight* directionalLightSphereData = nullptr;
@@ -1129,7 +1110,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	directionalLightSphereData->intensity = 1.0f;
 
 	// spriteのリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSprite = CreateBufferResource(dxCommon->GetDevice(), sizeof(Material));
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResourceSprite = dxCommon->CreateBufferResource(sizeof(Material));
 
 	// マテリアルにデータを書き込む
 	Material* materialDateSprite = nullptr;
@@ -1210,29 +1191,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//
 
-		//ImGui::Begin("Window"); 
-		//// ここにテキストを入れられる
-		//ImGui::Text("ImGuiText");
-		//ImGui::Text("Sphere");
-		//ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
-		//ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
-		//ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
-		//ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
-		//ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
-		//ImGui::SliderFloat3("SliderRotateSphere", *inputRotateSphere, -10.0f, 10.0f);
-		//ImGui::InputFloat3("ScaleSphere", *inputScaleSphere);
-		//ImGui::SliderFloat3("SliderScaleSphere", *inputScaleSphere, 0.5f, 5.0f);
-		//ImGui::InputFloat("SphereTexture", &textureChange);
-		//ImGui::Text("Sprite");
-		//ImGui::InputFloat("SpriteX", &transformSprite.translate.x);
-		//ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
-		//ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
-		//ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
-		//ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
-		//ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
-		//ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-		//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+		ImGui::Begin("Window"); 
+		// ここにテキストを入れられる
+		ImGui::Text("ImGuiText");
+		ImGui::Text("Sphere");
+		/*ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
+		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
+		ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
+		ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
+		ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
+		ImGui::SliderFloat3("SliderRotateSphere", *inputRotateSphere, -10.0f, 10.0f);
+		ImGui::InputFloat3("ScaleSphere", *inputScaleSphere);
+		ImGui::SliderFloat3("SliderScaleSphere", *inputScaleSphere, 0.5f, 5.0f);
+		ImGui::InputFloat("SphereTexture", &textureChange);
+		ImGui::Text("Sprite");
+		ImGui::InputFloat("SpriteX", &transformSprite.translate.x);
+		ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
+		ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
+		ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
+		ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
+		ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
+		ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
 		
 		
 
@@ -1263,8 +1244,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 開発用UIの処理
 		 ImGui::ShowDemoWindow();
-		 ImGui::Begin("Settings");
-		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
+		/* ImGui::Begin("Settings");
+		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);*/
 		 ImGui::End();
 
 		//-------------入力デバイス追加-----------------//
