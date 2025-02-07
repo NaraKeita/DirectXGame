@@ -682,7 +682,6 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 			modelData.vertices.push_back(triangle[0]);
 		}
 	}
-
 	return modelData;
 }
 
