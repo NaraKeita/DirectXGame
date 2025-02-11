@@ -111,11 +111,6 @@ ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t 
 	return resource;
 }
 
-//void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
-//
-//	
-//}
-
 void DirectXCommon::Initialize(WinApp* winApp) {
 	// NULL検出
 	assert(winApp);
@@ -179,7 +174,7 @@ void DirectXCommon::DeviceInitialize() {
 		// デバッグレイヤーを有効にする
 		debugController->EnableDebugLayer();
 		// さらにGPU側でもチェックを行うようにする
-		debugController->SetEnableGPUBasedValidation(TRUE);
+		debugController->SetEnableSynchronizedCommandQueueValidation(TRUE);
 	}
 
 #endif
@@ -258,7 +253,6 @@ void DirectXCommon::DeviceInitialize() {
 		infoQueue->PushStorageFilter(&filter);
 
 		// 解放
-		infoQueue->Release();
 	}
 #endif
 }
@@ -388,9 +382,6 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	//const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
 	//
 
-	//// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
-	// Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = CreateTextureResource(device.Get(), metadata2);
-	// UploadTextureData(textureResource2.Get(), mipImages2);
 
 	//// metadataを基にSRVの設定
 	// D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
@@ -433,8 +424,7 @@ void DirectXCommon::DescriptorHeapInitialize() {
 	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
 	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
 
-	//// SRVの生成
-	//device->CreateShaderResourceView(textureResource2.Get(), &srvDesc2, textureSrvHandleCPU2);
+
 	#pragma endregion
 }
 
@@ -641,7 +631,7 @@ Microsoft::WRL::ComPtr<IDxcBlob> DirectXCommon::CompileShader(const std::wstring
 		}
 		// 4.Complie結果
 		IDxcBlob* shaderBlob = nullptr;
-		//hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
+		hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
 		assert(SUCCEEDED(hr));
 	
 		log(StringUtility::ConvertString(std::format(L"Compile Succeeded,path:{},profile:{}\n", filePath, profile)));
@@ -683,7 +673,8 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateBufferResource(size_
 	return vertexResource;
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata) {
+Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateTextureResource(const DirectX::TexMetadata& metadata) {
+
 	D3D12_RESOURCE_DESC resourceDesc{};
 	resourceDesc.Width = UINT(metadata.width);                             // 幅
 	resourceDesc.Height = UINT(metadata.height);                           // 高さ
@@ -703,7 +694,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateTextureResource(ID3D
 	ID3D12Resource* resource = nullptr;
 	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&resource));
 	assert(SUCCEEDED(hr));
-	return Microsoft::WRL::ComPtr<ID3D12Resource>();
+	return resource;
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
@@ -716,16 +707,16 @@ D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetGPUDescriptorHandle(const Microsof
 DirectX::ScratchImage DirectXCommon::LoadTexture(const std::string& filePath) { 
 	// テクスチャファイル // byte関連
 	DirectX::ScratchImage image{};
-	// std::wstring filePathW = ConvertString(filePath);
-	// HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-	// assert(SUCCEEDED(hr));
+	 std::wstring filePathW = StringUtility::ConvertString(filePath);
+	 HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
+	 assert(SUCCEEDED(hr));
 
 	// ミップマップ　//拡大縮小で使う
 	DirectX::ScratchImage mipImages{};
-	// hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	// assert(SUCCEEDED(hr));
+	 hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
+	 assert(SUCCEEDED(hr));
 
-	return DirectX::ScratchImage();
+	return mipImages;
 }
 
 //CPU
