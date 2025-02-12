@@ -1155,14 +1155,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 		
-		// 開発用UIの処理
-		ImGui::ShowDemoWindow();
-		// ImGuiの内部コマンド
-		ImGui::Render();
-		 ImGui::Begin("Settings");
-		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
-		//ImGui::End();
-
+		
+		
 		Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 		Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 		Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -1188,6 +1182,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 		materialDateSprite->uvTransform = uvTransformMatrix;
 
+		ImGui::Render();
+		// 開発用UIの処理
+		//ImGui::ShowDemoWindow();
+		//// ImGuiの内部コマンド
+		//
+		// ImGui::Begin("Settings");
+		// ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
+		////ImGui::End();
 
 		//-------------入力デバイス追加-----------------//
 
@@ -1261,6 +1263,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//		// 画面に描く処理はすべて終わり、画面に映すので、状況をそうい
 		//		// 今回はResourceTargetからPresentにする
 		
+				ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
+
 		//		//// 出力ウィンドウへの文字出力
 		//		// OutputDebugStringA("Hello DirectX!\n");
 		        // 描画後処理
