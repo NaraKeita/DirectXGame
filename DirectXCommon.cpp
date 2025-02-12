@@ -323,109 +323,14 @@ void DirectXCommon::SwapChainInitialize() {
 
 //デスクリプタヒープ
 void DirectXCommon::DescriptorHeapInitialize() {
-#pragma region ディスクリプターヒープの生成
-	//RTV用のDescriptorSizeを取得しておく
-	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-	
-	//SRV用のDescriptorSizeを取得しておく
 	descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	
-	//DSV用のDescriptorSizeを取得しておく
+	descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-
-	//RTV用デスクリプタヒープ
-	D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
-	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvDescriptorHeapDesc.NumDescriptors = 2;
-	//rtvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	
-	 hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
-	assert(SUCCEEDED(hr));
-
-	//ここ
-	//CreateDescriptorHeap();
-
-
-	//SRV用のデスクリプタヒープ
-	D3D12_DESCRIPTOR_HEAP_DESC srvDescriptorHeapDesc{};
-	srvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-	srvDescriptorHeapDesc.NumDescriptors = 2;
-	srvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	
-	hr = device->CreateDescriptorHeap(&srvDescriptorHeapDesc, IID_PPV_ARGS(&srvDescriptorHeap));
-	assert(SUCCEEDED(hr));
-
-	//DSV用のデスクリプタヒープ
-	D3D12_DESCRIPTOR_HEAP_DESC dsvDescriptorHeapDesc{};
-	dsvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
-	dsvDescriptorHeapDesc.NumDescriptors = 2;
-	//dsvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
-	
-	hr = device->CreateDescriptorHeap(&dsvDescriptorHeapDesc, IID_PPV_ARGS(&dsvDescriptorHeap));
-	assert(SUCCEEDED(hr));
+#pragma region ディスクリプターヒープの生成
+	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	dsvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 #pragma endregion
-
-#pragma region
-	/*D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
-
-	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-	rtvDescriptorHeapDesc.NumDescriptors = 2;
-	HRESULT hr = device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&rtvDescriptorHeap));
-
-	assert(SUCCEEDED(hr));*/
-	/*D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
-	rtvDescriptorHeapDesc*/
-
-	
-	//// textureを読んで転送
-	//DirectX::ScratchImage mipImages2 = LoadTexture("resource/monsterBall.png");
-	//const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
-	//
-
-
-	//// metadataを基にSRVの設定
-	// D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
-	// srvDesc2.Format = metadata2.format;
-	// srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-	// srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-	// srvDesc2.Texture2D.MipLevels = UINT(metadata2.mipLevels);
-
-	/*rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	srvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
-	*/
-	
-	//rtvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-	//srvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
-	//dsvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-
-	//// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
-	//dsvDescriptorHeap2 = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-
-	//// SRVを作成するDescriptorHeap場所決め
-	//textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
-	//textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
-	//// 先頭ImGui
-	//textureSrvHandleCPU2.ptr += descriptorSizeSRV;
-	//textureSrvHandleGPU2.ptr += descriptorSizeSRV;
-
-	//// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
-	//dsvDescriptorHeap = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-
-	//// SRVを作成するDescriptorHeap場所決め
-	//textureSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 0);
-	//textureSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 0);
-	//// 先頭ImGui
-	//textureSrvHandleCPU.ptr += descriptorSizeSRV;
-	//textureSrvHandleGPU.ptr += descriptorSizeSRV;
-
-	//depthStencilResource2 = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
-	//
-	//// SRVを作成するDescriptorHeap場所決め
-	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = GetCPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
-	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = GetGPUDescriptorHandle(srvDescriptorHeap.Get(), descriptorSizeSRV, 2);
-
-
-	#pragma endregion
 }
 
 //レンダーターゲット
@@ -698,10 +603,14 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXCommon::CreateTextureResource(cons
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetCPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
-	return D3D12_CPU_DESCRIPTOR_HANDLE();
+	D3D12_CPU_DESCRIPTOR_HANDLE handleCPU = descriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	handleCPU.ptr += (descriptorSize * index);
+	return handleCPU;
 }
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetGPUDescriptorHandle(const Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {
-	return D3D12_GPU_DESCRIPTOR_HANDLE();
+	D3D12_GPU_DESCRIPTOR_HANDLE handleGPU = descriptorHeap->GetGPUDescriptorHandleForHeapStart();
+	handleGPU.ptr += (descriptorSize * index);
+	return handleGPU;
 }
 
 DirectX::ScratchImage DirectXCommon::LoadTexture(const std::string& filePath) { 
