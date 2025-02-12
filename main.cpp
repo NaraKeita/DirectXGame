@@ -25,6 +25,19 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
 
+#include <functional>
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+typedef void (*PFunc)(int*);
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <windows.h>
+
+
+
 std::wstring ConvertString(const std::string& str) {
 	if (str.empty()) {
 		return std::wstring();
@@ -123,6 +136,12 @@ struct Vector4 {
 	float s;
 };
 
+struct Transform {
+	Vector3 scale;
+	Vector3 rotate;
+	Vector3 translate;
+};
+
 struct Matrix3x3 {
 	float m[3][3];
 };
@@ -219,11 +238,7 @@ Matrix4x4 MakeTranslateMatrix(Vector3 translate) {
 	return result;
 }
 
-struct Transform {
-	Vector3 scale;
-	Vector3 rotate;
-	Vector3 translate;
-};
+
 
 #pragma region Affine
 
@@ -785,6 +800,28 @@ ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t 
 	assert(SUCCEEDED(hr));
 	return resource;
 }
+
+Transform transform{
+		{1.0f, 1.0f, 1.0f},
+		{0.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f}
+};
+
+Transform transformSphere{
+		{1.0f, 1.0f, 1.0f},
+		{0.0f, 0.0f, 0.0f},
+		{0.0f, 0.0f, 0.0f}
+};
+
+
+// コールバック関数のプロトタイプ宣言
+typedef void (*Callback)();
+
+// 判定を行うコールバック関数
+void judge_result() {
+	transformSphere.rotate.y += 1.0f;
+}
+
 
 // ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(
@@ -1435,11 +1472,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	scissorRect.top = 0;
 	scissorRect.bottom = WinApp::kClientHeight;
 
-	Transform transform{
-	    {1.0f, 1.0f, 1.0f},
-        {0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f}
-    };
+	
 	Transform cameraTransform = {
 	    {1.0f, 1.0f, 1.0f  },
         {0.0f, 0.0f, 0.0f  },
@@ -1452,17 +1485,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         {0.0f, 0.0f, 0.0f}
     };
 
-	Transform transformSphere{
-	    {1.0f, 1.0f, 1.0f},
-        {0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f}
-    };
-
-	Transform transformL{
-	    {1.0f, 1.0f, 1.0f},
-        {0.0f, 0.0f, 0.0f},
-        {0.0f, 0.0f, 0.0f}
-    };
+	
 
 	Transform uvTransformSprite{
 	    {1.0f, 1.0f, 1.0f},
@@ -1500,8 +1523,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	assert(SUCCEEDED(hr));
 	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
-
-	
 
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
@@ -1553,7 +1574,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//-------------入力デバイス追加-----------------//
 
 			
-			
 			//for (int i = 0; i < 256; i++) {
 			//	prekey[i] = key[i];
 			//}
@@ -1561,9 +1581,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//keyboard->Acquire();
 			//keyboard->GetDeviceState(sizeof(key), key);
 			//数字の0キーを押されていたら
+		    
 			if (input->TriggerKey(DIK_0)) {
 				OutputDebugStringA("Hit 0\n");//出力ウィンドウに[Hit 0]と表示
+				
 			}
+			
 
 			//動き確認用
 			if (input->PusuKey(DIK_LEFT) || input->PusuKey(DIK_A)) {
@@ -1580,36 +1603,40 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 
 			
-			if (input->TriggerKey(DIK_SPACE)) {
-				trrigerCheck *= -1.0f;
-				transformSphere.translate.x += trrigerCheck;
-			
+			if (input->PusuKey(DIK_SPACE)) {
+				//trrigerCheck *= -1.0f;
+				//transformSphere.translate.x += trrigerCheck;
+				Callback callback = judge_result;
+				callback();
 			}
+			
 
+			
 			//--------------------------------------------//
-
+		    SetConsoleOutputCP(65001); // 追加
 			// ここにテキストを入れられる
-			ImGui::Text("ImGuiText");
-			ImGui::Text("Sphere");
-			ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
-			ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
-			ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
-			ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
-			ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
-			ImGui::SliderFloat3("SliderRotateSphere", *inputRotateSphere, -10.0f, 10.0f);
-			ImGui::InputFloat3("ScaleSphere", *inputScaleSphere);
-			ImGui::SliderFloat3("SliderScaleSphere", *inputScaleSphere, 0.5f, 5.0f);
-			ImGui::InputFloat("SphereTexture", &textureChange);
-			ImGui::Text("Sprite");
-			ImGui::InputFloat("SpriteX", &transformSprite.translate.x);
-			ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
-			ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
-			ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
-			ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
-			ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
-			ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+		    //ImGui::Text("俺の名前は奈良渓太！よろしくね！"/*, Recursive*/);
+			//ImGui::Text("Sphere");
+	       // ImGui:scanf_s("%d");
+			//ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
+			//ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
+			//ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
+			//ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
+			//ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
+			//ImGui::SliderFloat3("SliderRotateSphere", *inputRotateSphere, -10.0f, 10.0f);
+			//ImGui::InputFloat3("ScaleSphere", *inputScaleSphere);
+			//ImGui::SliderFloat3("SliderScaleSphere", *inputScaleSphere, 0.5f, 5.0f);
+			//ImGui::InputFloat("SphereTexture", &textureChange);
+			//ImGui::Text("Sprite");
+			//ImGui::InputFloat("SpriteX", &transformSprite.translate.x);
+			//ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
+			//ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
+			//ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
+			//ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
+			//ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
+			//ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+			//ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+			//ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 
 			// ImGuiの内部コマンド
 			ImGui::Render();
