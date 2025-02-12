@@ -764,27 +764,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// log("Hello,DirectX\n");
 
 #pragma endregion
-
-	
-	// dxCommon->UploadTextureData(textureResource2.Get(), mipImages2);
-	// Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2 = CreateDepthStencilTextureResource(device.Get(), WinApp::kClientWidth, WinApp::kClientHeight);
-
-	//
-	//// DSVようのヒープでディスクリプタの数1、shader内で触らないのでfalse
-	// Microsoft::WRL::ComPtr<ID3D12DescriptorHeap > dsvDescriptorHeap2 = CreateDescriptorHeap(device.Get(), D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
-	// 先頭ImGui
+ //先頭ImGui
 	// textureSrvHandleCPU2.ptr += descriptorSizeSRV;
 	// textureSrvHandleGPU2.ptr += descriptorSizeSRV;
-	//
-
 	
-
-
-
-
-
-
-
 	 //// 先頭ImGui
 	// textureSrvHandleCPU.ptr += descriptorSizeSRV;
 	// textureSrvHandleGPU.ptr += descriptorSizeSRV;
@@ -1116,7 +1099,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	const DirectX::TexMetadata& metadata2 = mipImages2.GetMetadata();
 	Microsoft::WRL::ComPtr<ID3D12Resource> textureResource2 = dxCommon->CreateTextureResource(metadata2);
 	dxCommon->UploadTextureData(textureResource2.Get(), mipImages2);
-
+	
 	// metadataを基にSRVの設定
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format = metadata.format;
