@@ -1133,7 +1133,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		//ImGui::Begin("Window"); 
 		// ここにテキストを入れられる
-		/*ImGui::Text("ImGuiText");
+		ImGui::Text("ImGuiText");
 		ImGui::Text("Sphere");
 		ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
 		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
@@ -1153,14 +1153,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
 		ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
+		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
 		
 		// 開発用UIの処理
 		ImGui::ShowDemoWindow();
 		// ImGuiの内部コマンド
 		ImGui::Render();
-		/* ImGui::Begin("Settings");
-		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);*/
+		 ImGui::Begin("Settings");
+		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
 		//ImGui::End();
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
