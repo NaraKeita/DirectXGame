@@ -19,8 +19,9 @@
 #include <dxgi1_6.h>
 #include <string>
 #include <wrl.h>
-
+#include <chrono>
 #include "externals/DirectXTex/DirectXTex.h"
+#include <thread>
 
 // extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -75,6 +76,11 @@ public:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> rtvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvDescriptorHeap;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap2;
+
+	//記録時間(FPS固定用)
+	std::chrono::steady_clock::time_point reference_;
+
+	void Finalize();
 
 	// 描画前処理
 	void PreDraw();
@@ -144,6 +150,12 @@ private: // メンバ変数
 
 	//------------------------------------------------------------------//
 
+	//メンバ関数
+	//FPS固定初期化
+	void InitializeFixFPS();
+	//FPS固定更新
+	void UpdateFixFPS();
+
 	//------------------------------------------------------------------//
 
 	//--------------------------------fence-------------------------------//
@@ -174,6 +186,7 @@ private: // メンバ変数
 	D3D12_VIEWPORT viewport;
 
 	D3D12_RECT scissorRect{};
+
 	//----------------------------------------------------------------------------------------------//
 
 	//----------------------------------------------------------------------------------------------//

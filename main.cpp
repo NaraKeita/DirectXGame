@@ -1131,11 +1131,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 入力の更新
 		input->Update();
 
-		//
-
-		ImGui::Begin("Window"); 
+		//ImGui::Begin("Window"); 
 		// ここにテキストを入れられる
-		ImGui::Text("ImGuiText");
+		/*ImGui::Text("ImGuiText");
 		ImGui::Text("Sphere");
 		ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
 		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
@@ -1155,9 +1153,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
 		ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
 		
-		
+		// 開発用UIの処理
+		ImGui::ShowDemoWindow();
+		// ImGuiの内部コマンド
+		ImGui::Render();
+		/* ImGui::Begin("Settings");
+		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);*/
+		//ImGui::End();
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 		Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
@@ -1184,11 +1188,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 		materialDateSprite->uvTransform = uvTransformMatrix;
 
-		// 開発用UIの処理
-		 ImGui::ShowDemoWindow();
-		/* ImGui::Begin("Settings");
-		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);*/
-		 ImGui::End();
 
 		//-------------入力デバイス追加-----------------//
 
@@ -1225,8 +1224,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//--------------------------------------------//
 
 
-		// ImGuiの内部コマンド
-		 ImGui::Render();
+		
 		
 		//描画前処理
 		 dxCommon->PreDraw();
@@ -1271,12 +1269,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 		// delete input;
 
-		
-		 ImGui_ImplDX12_Shutdown();
-		 ImGui_ImplWin32_Shutdown();
-		 ImGui::DestroyContext();
-		/* CloseHandle(fenceEvent);
-		 fence->Release();
+		 /*fence->Release();
 		 rtvDescriptorHeap->Release();
 		 srvDescriptorHeap->Release();
 		 swapChainResource[0]->Release();
@@ -1327,6 +1320,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//	debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
 		//	debug->Release();
 		// }
+
+
 
 		// WindowsAPIの終了処理
 		winApp->Finalize();

@@ -4,86 +4,7 @@
 using namespace Logger;
 using namespace Microsoft::WRL;
 
-//// ComplierShader関数
-
-//IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler) {
-//	// 1.hlslファイル
-//	log(StringUtility::ConvertString(std::format(L"Begin CompileShader,path:{},profile:{}\n", filePath, profile)));
-//
-//	Microsoft::WRL::ComPtr<IDxcBlobEncoding> shaderSource = nullptr;
-//
-//	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
-//
-//	assert(SUCCEEDED(hr));
-//
-//	DxcBuffer shaderSourceBuffer;
-//	shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
-//	shaderSourceBuffer.Size = shaderSource->GetBufferSize();
-//	shaderSourceBuffer.Encoding = DXC_CP_UTF8;
-//
-//	// 2.Complie
-//	LPCWSTR arguments[] = {
-//	    filePath.c_str(), L"-E", L"main", L"-T", profile, L"-Zi", L"-Qembed_debug", L"-Od", L"-Zpr",
-//	};
-//
-//	Microsoft::WRL::ComPtr<IDxcResult> shaderResult = nullptr;
-//
-//	hr = dxcCompiler->Compile(&shaderSourceBuffer, arguments, _countof(arguments), includeHandler, IID_PPV_ARGS(&shaderResult));
-//
-//	assert(SUCCEEDED(hr));
-//
-//	// 3.警告エラー
-//
-//	IDxcBlobUtf8* shaderError = nullptr;
-//	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
-//	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
-//		log(shaderError->GetStringPointer());
-//		// 警告エラーダメ絶対
-//		assert(false);
-//	}
-//	// 4.Complie結果
-//	IDxcBlob* shaderBlob = nullptr;
-//	//hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
-//	assert(SUCCEEDED(hr));
-//
-//	log(StringUtility::ConvertString(std::format(L"Compile Succeeded,path:{},profile:{}\n", filePath, profile)));
-//
-//	shaderSource->Release();
-//	shaderResult->Release();
-//
-//	return shaderBlob;
-//}
-////struct Vector4 {
-////	float x;
-////	float y;
-////	float z;
-////	float s;
-////};
-////struct Matrix4x4 {
-////	float m[4][4];
-////};
-////
-////struct Material {
-////	Vector4 color;
-////	int32_t enableLighting;
-////	float padding[3]; // 枠確保用06-01 9
-////	Matrix4x4 uvTransform;
-////};
-
-
-//DirectX::ScratchImage LoadTexture(const std::string& filePath) {
-//	
-//	// ミップマップ付きのデータを返す
-//	return mipImages;
-//}
-
-//ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata) {
-//
-//	
-//	 return resource;
-//}
-
-ID3D12Resource* CreateDepthStencilTextureResource(ID3D12Device* device, int32_t width, int32_t height) {
+Microsoft::WRL::ComPtr<ID3D12Resource> CreateDepthStencilTextureResource(ID3D12Device* device, int32_t width, int32_t height) {
 
 	D3D12_RESOURCE_DESC resourceDesc{};
 	resourceDesc.Width = width;
@@ -116,6 +37,9 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	assert(winApp);
 	// メンバ変数に記録
 	this->winApp = winApp;
+	//FPS固定初期化
+	InitializeFixFPS();
+
 	DeviceInitialize();
 	CommandInitialize();
 	SwapChainInitialize();
@@ -234,7 +158,7 @@ void DirectXCommon::DeviceInitialize() {
 #pragma endregion
 
 	#ifdef _DEBUG
-	ID3D12InfoQueue* infoQueue = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12InfoQueue> infoQueue = nullptr;
 	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
 		// やばいエラー時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
@@ -285,6 +209,7 @@ void DirectXCommon::CommandInitialize() {
 #pragma region コマンドリスト
 	// コマンドリスト生成
 	 hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
+	
 	// 生成できない場合
 	 assert(SUCCEEDED(hr));
 #pragma endregion
@@ -686,6 +611,44 @@ void DirectXCommon::ZBufferInitialize() {
 	assert(SUCCEEDED(hr));
 }
 
+void DirectXCommon::InitializeFixFPS()
+{
+	//現在時間を記録する
+	reference_ = std::chrono::steady_clock::now();
+}
+
+void DirectXCommon::UpdateFixFPS()
+{
+	// 1/60秒ぴったりの時間
+	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
+	// 1/60秒よりわずかに短い時間
+	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
+
+	//現在時間を取得する
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	//現在記録からの経過時間を取得する
+	std::chrono::microseconds elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - reference_);
+
+	// 1/60秒(よりわずかに短い時間)経っていない場合
+	if (elapsed < kMinTime) {
+		// 1/60秒経過するまで微小なスリープを繰り返す
+		while (std::chrono::steady_clock::now() - reference_ < kMinTime) {
+			//1マイクロ秒スリープ
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
+		}
+	}
+	//現在の時間を記録する
+	reference_ = std::chrono::steady_clock::now();
+}
+
+void DirectXCommon::Finalize()
+{
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+	CloseHandle(fenceEvent);
+}
+
 void DirectXCommon::PreDraw() {
 #pragma region バックバッファの番号取得
 	// これから書き込みバックバッファのインデックスを取得
@@ -804,6 +767,9 @@ void DirectXCommon::PostDraw() {
 	}
 #pragma endregion
 
+	//FPS固定更新
+	UpdateFixFPS();
+
 #pragma region コマンドアロケータのリセット
 	// 次のフレームのコマンドリストを準備
 	hr = commandAllocator->Reset();
@@ -816,72 +782,3 @@ void DirectXCommon::PostDraw() {
 	assert(SUCCEEDED(hr));
 #pragma endregion
 }
-
-//void DirextXCommon::ZBuffer() {
-//	HRESULT hr = device->CreateCommittedResource(
-//		&heapProperties,
-//		D3D12_HEAP_FLAG_NONE,
-//		&resourceDesc,
-//		D3D12_RESOURCE_STATE_GENERIC_READ,
-//		nullptr,
-//		IID_PPV_ARGS(&zBuffer));
-//	assert(SUCCEEDED(hr));
-//}
-
-//void DirectXCommon::DescriptorHeap() {
-//	const uint32_t descriptorSizeSRV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-//	const uint32_t descriptorSizeRTV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-//	const uint32_t descriptorSizeDSV = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
-//}
-
-//void DirectXCommon::Commond() {
-//	
-//	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
-//	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
-//	// 生成できない場合
-//	assert(SUCCEEDED(hr));
-//
-//	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
-//	// 生成できない場合
-//	assert(SUCCEEDED(hr));
-//
-//	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
-//	// 生成できない場合
-//	assert(SUCCEEDED(hr));
-//}
-
-//void DirectXCommon::SwapChain() {
-//
-//	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-//	swapChainDesc.Width = WinApp::kClientWidth;
-//	swapChainDesc.Height = WinApp::kClientHeight;
-//	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-//	swapChainDesc.SampleDesc.Count = 1;
-//	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-//	swapChainDesc.BufferCount = 2;
-//	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-//
-//	hr = dxgiFactory->CreateSwapChainForHwnd(commandQueue.Get(), winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
-//	assert(SUCCEEDED(hr));
-//
-//	// SwapchainからResourceを引っ張ってくる
-//	Microsoft::WRL::ComPtr<ID3D12Resource> swapChainResource[2] = {nullptr};
-//
-//	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResource[0]));
-//	assert(SUCCEEDED(hr));
-//
-//	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResource[1]));
-//	assert(SUCCEEDED(hr));
-//}
-
-//void DirectXCommon::Fence() {
-//	uint64_t fenceValue = 0;
-//	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-//	assert(SUCCEEDED(hr));
-//	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-//	assert(fenceEvent != nullptr);
-//}
-
-//void DirectXCommon::ImGui() {
-//
-//}
