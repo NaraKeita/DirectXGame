@@ -1128,9 +1128,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
-		ImGui_ImplDX12_Shutdown();
-		ImGui_ImplWin32_Shutdown();
-		ImGui::DestroyContext();
+		
 
 		// 入力の更新
 		input->Update();
@@ -1275,6 +1273,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//}
 	}
 		// delete input;
+
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 
 		 /*fence->Release();
 		 rtvDescriptorHeap->Release();
