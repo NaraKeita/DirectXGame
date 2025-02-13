@@ -1,5 +1,6 @@
 #include "WinApp.h"
 #include "externals/imgui/imgui.h"
+#pragma comment(lib,"winmm.lib")
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 // ウィンドウプロシージャ
@@ -24,6 +25,9 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 void WinApp::Initialize() {
 
 	CoInitializeEx(0, COINIT_MULTITHREADED);
+
+	//システムタイマーの分解能を上げる
+	timeBeginPeriod(1);
 
 	//WNDCLASS wc{};
 

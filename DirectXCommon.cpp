@@ -1,6 +1,5 @@
 #include "DirectXCommon.h"
 
-
 using namespace Logger;
 using namespace Microsoft::WRL;
 
