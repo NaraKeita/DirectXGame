@@ -79,6 +79,8 @@ public:
 	//記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
 
+	void DestroyShutdown();
+
 	void Finalize();
 
 	// 描画前処理

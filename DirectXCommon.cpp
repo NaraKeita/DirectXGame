@@ -641,6 +641,13 @@ void DirectXCommon::UpdateFixFPS()
 	reference_ = std::chrono::steady_clock::now();
 }
 
+void DirectXCommon::DestroyShutdown()
+{
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+}
+
 void DirectXCommon::Finalize()
 {
 	CloseHandle(fenceEvent);
