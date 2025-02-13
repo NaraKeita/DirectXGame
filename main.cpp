@@ -1131,6 +1131,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 入力の更新
 		input->Update();
 
+		// 開発用UIの処理
+		//ImGui::ShowDemoWindow();
+
 		ImGui::Begin("Window"); 
 		// ここにテキストを入れられる
 		ImGui::Text("ImGuiText");
@@ -1163,7 +1166,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 WorldViewProjectionMatrix = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
 		Matrix4x4 worldMatrixSphere = MakeAffineMatrix(transformSphere.scale, transformSphere.rotate, transformSphere.translate);
 		Matrix4x4 WorldViewProjectionMatrixSphere = Multiply(worldMatrixSphere, Multiply(viewMatrix, projectionMatrix));
-
 		wvpDateSphere->WVP = WorldViewProjectionMatrixSphere;
 
 		DrawSphere(vertexDataSphere);
@@ -1182,49 +1184,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		materialDateSprite->uvTransform = uvTransformMatrix;
 
 		ImGui::Render();
-		// 開発用UIの処理
-		//ImGui::ShowDemoWindow();
-		//// ImGuiの内部コマンド
-		//
-		/* ImGui::Begin("Settings");
-		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);*/
-		////ImGui::End();
-
-		//-------------入力デバイス追加-----------------//
-
-		// for (int i = 0; i < 256; i++) {
-		//	prekey[i] = key[i];
-		// }
-		//// キーボード情報の取得開始
-		// keyboard->Acquire();
-		// keyboard->GetDeviceState(sizeof(key), key);
-		// 数字の0キーを押されていたら
-		//if (input->TriggerKey(DIK_0)) {
-		//	OutputDebugStringA("Hit 0\n"); // 出力ウィンドウに[Hit 0]と表示
-		//}
-
-		//// 動き確認用
-		//if (input->PusuKey(DIK_LEFT) || input->PusuKey(DIK_A)) {
-		//	transformSphere.translate.x -= 0.01f;
-		//}
-		//if (input->PusuKey(DIK_RIGHT) || input->PusuKey(DIK_D)) {
-		//	transformSphere.translate.x += 0.01f;
-		//}
-		//if (input->PusuKey(DIK_UP) || input->PusuKey(DIK_W)) {
-		//	transformSphere.translate.y += 0.01f;
-		//}
-		//if (input->PusuKey(DIK_DOWN) || input->PusuKey(DIK_S)) {
-		//	transformSphere.translate.y -= 0.01f;
-		//}
-
-		//if (input->TriggerKey(DIK_SPACE)) {
-		//	trrigerCheck *= -1.0f;
-		//	transformSphere.translate.x += trrigerCheck;
-		//}
-
-		//--------------------------------------------//
-
-
+		
+		
 		//描画前処理
 		 dxCommon->PreDraw();
 		
@@ -1254,77 +1215,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				dxCommon->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureSrvHandleGPU);
 				dxCommon->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
-		//		// 実際のcommandListのImGui描画コマンドを挟む
+				// 実際のcommandListのImGui描画コマンドを挟む
 				ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
 
-		//		// 画面に描く処理はすべて終わり、画面に映すので、状況をそうい
-		//		// 今回はResourceTargetからPresentにする
-		
-		//		//// 出力ウィンドウへの文字出力
-		//		// OutputDebugStringA("Hello DirectX!\n");
 		        // 描画後処理
 		        dxCommon->PostDraw();
-		//}
+				if()
 	}
 
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-		 /*fence->Release();
-		 rtvDescriptorHeap->Release();
-		 srvDescriptorHeap->Release();
-		 swapChainResource[0]->Release();
-		 swapChainResource[1]->Release();
-		 swapChain->Release();
-		 commandList->Release();
-		 commandAllocator->Release();
-		 commandQueue->Release();
-		 device->Release();
-		 useAdapter->Release();
-		 dxgiFactory->Release();*/
-		// wvpResourceSphere->Release();
-		// vertexResourceSphere->Release();
-		// vertexResourceSprite->Release();
-		// transformationMatrixResourceSprite->Release();
-		// indexResourceSprite->Release();
-		// directionalLightSphereResource->Release();
-		// vertexResourceModel->Release();
-		//// graphicsPipelineState->Release();
-		// signatureBlob->Release();
-		//if (errorBlob) {
-		//    errorBlob->Release();
-		//}
-		// rootSignature->Release();
-		///* pixelShaderBlob->Release();
-		// vertexShaderBlob->Release();*/
-		// materialResourceSphere->Release();
-		// materialResourceSprite->Release();
+	dxCommon->Finalize();
 
 #ifdef _DEBUG
 		//debugController->Release();
 #endif
 
 		//mipImages.Release();
-		////textureResource->Release();
-		////depthStencilResource->Release();
-		////dsvDescriptorHeap->Release();
+		
 		// mipImages2.Release();
-		// textureResource2->Release();
-		// depthStencilResource2->Release();
-		// dsvDescriptorHeap2->Release();
-
-		//// リソースリークチェック
-		// IDXGIDebug1* debug;
-		// if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
-		//	debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-		//	debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-		//	debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-		//	debug->Release();
-		// }
+		
 
 	delete input;
 
-	    dxCommon->Finalize();
+	   
 
 		// WindowsAPIの終了処理
 		winApp->Finalize();

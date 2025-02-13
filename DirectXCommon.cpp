@@ -643,7 +643,6 @@ void DirectXCommon::UpdateFixFPS()
 
 void DirectXCommon::Finalize()
 {
-	
 	CloseHandle(fenceEvent);
 }
 

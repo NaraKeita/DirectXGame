@@ -52,6 +52,7 @@ bool Input::PusuKey(BYTE keyNumber) {
 
 bool Input::TriggerKey(BYTE keyNumber) { 
 	if (!prekey[keyNumber] && key[keyNumber]) {
+
 		return true;
 	}
 	// そうでなければfalseを返す
