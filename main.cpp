@@ -17,6 +17,8 @@
 #include "Input.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
+#include "D3DResourceLeakChecker.h"
+#include "memory.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -600,40 +602,23 @@ LRESULT CALLBACK WindowProc(
 
 // Windowsアプリのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	struct D3DResourceLeakChecker {
-		~D3DResourceLeakChecker() {
-			// リソースリークチェック
-			Microsoft::WRL::ComPtr<IDXGIDebug1> debug;
-			if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
-				debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
-				debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
-				debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
-				debug->Release();
-			}
-		}
-	};
-	//D3DResourceLeakChecker apa;
-	// ポインタ
-	DirectXCommon* dxCommon = nullptr;
-
+	
 	// ポインタ
 	WinApp* winApp = nullptr;
 	// WindowsAPIの初期化
 	winApp = new WinApp();
 	winApp->Initialize();
 
-
-
-	Input* input = nullptr;
-	input = new Input();
-	input->Initialize(winApp);
-
 	// DirectXの初期化
+	// ポインタ
+	DirectXCommon* dxCommon = nullptr;
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(winApp);
 
-
-	// log("Hello,DirectX\n");
+	//インプット
+	Input* input = nullptr;
+	input = new Input();
+	input->Initialize(winApp);
 
 #pragma endregion
 
@@ -1093,9 +1078,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				}
 	}
 
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	dxCommon->DestroyShutdown();
 	dxCommon->Finalize();
 
 
@@ -1104,15 +1087,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif
 		//mipImages.Release();
 		// mipImages2.Release();
+	
+	delete dxCommon;
 		
-		// WindowsAPIの終了処理
+	// WindowsAPIの終了処理
 		winApp->Finalize();
 
 		// WindowsAPIの開放
 		
-		winApp = nullptr;
+		//winApp = nullptr;
 		delete input;
-		delete dxCommon;
+
 		delete winApp;
 
 		return 0;

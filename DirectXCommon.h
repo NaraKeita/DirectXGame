@@ -81,6 +81,7 @@ public:
 
 	//void DestroyShutdown();
 
+	void DestroyShutdown();
 	void Finalize();
 
 	// 描画前処理
@@ -142,7 +143,7 @@ private: // メンバ変数
 
 	//------------------------------深度バッファ------------------------//
 	// 深度バッファの生成
-	ID3D12Resource* resource = nullptr;
+	Microsoft::WRL::ComPtr <ID3D12Resource> resource = nullptr;
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> dsvDescriptorHeap;
 	// Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
@@ -199,8 +200,8 @@ private: // メンバ変数
 	// ID3D12Resource* resource = nullptr;
 
 	// DXC
-	IDxcUtils* dxcUtils = nullptr;
-	IDxcCompiler3* dxcCompiler = nullptr;
+	Microsoft::WRL::ComPtr <IDxcUtils> dxcUtils = nullptr;
+	Microsoft::WRL::ComPtr <IDxcCompiler3> dxcCompiler = nullptr;
 	IDxcIncludeHandler* includeHandler = nullptr;
 
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource2;
@@ -221,7 +222,7 @@ private: // メンバ変数
 	D3D12_HEAP_PROPERTIES uploadHeapProperties{};
 	D3D12_RESOURCE_DESC vertexResourceDesc{};
 	// 実際に頂点リソースを作る
-	ID3D12Resource* vertexResource = nullptr;
+	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource = nullptr;
 
 	//----------------------------------------------------------------------------------------------//
 };
