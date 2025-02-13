@@ -735,9 +735,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	winApp = new WinApp();
 	winApp->Initialize();
 
-	
-
-
 	struct D3DResourceLeakChecker {
 		~D3DResourceLeakChecker() {
 			// リソースリークチェック
@@ -1026,8 +1023,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialDateSprite->enableLighting = false;
 	materialDateSprite->uvTransform = MakeIdentity4x4();
 
-	
-
 	Transform transform{
 	    {1.0f, 1.0f, 1.0f},
         {0.0f, 0.0f, 0.0f},
@@ -1184,10 +1179,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::Render();
 		
-		
 		//描画前処理
 		 dxCommon->PreDraw();
-		
 			
 				dxCommon->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 				dxCommon->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
@@ -1229,25 +1222,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ImGui::DestroyContext();
 	dxCommon->Finalize();
 
+
 #ifdef _DEBUG
 		//debugController->Release();
 #endif
-
 		//mipImages.Release();
-		
 		// mipImages2.Release();
 		
-
-	delete input;
-
-	   
-
 		// WindowsAPIの終了処理
 		winApp->Finalize();
 
 		// WindowsAPIの開放
 		
 		winApp = nullptr;
+		delete input;
 		delete dxCommon;
 		delete winApp;
 
