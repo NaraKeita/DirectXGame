@@ -2,36 +2,30 @@
 
 #include <Windows.h>
 #include <cstdint>
-//#include <d3d12.h>
-//#include <dxgi1_6.h>
 #include <format>
 #include <string>
 #include <dxgidebug.h>
 #include <dxcapi.h>
 #include <fstream>
 #include <sstream>
+#include <memory>
+#include <math.h>
+#include <numbers>
+
 #include "externals/DirectXTex/DirectXTex.h"
 #include "externals/imgui/imgui.h"
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
+
 #include "Input.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "D3DResourceLeakChecker.h"
-#include "memory.h"
-
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-//#pragma comment(lib, "d3d12.lib")
-//#pragma comment(lib, "dxgi.lib")
-#pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "dxcompiler.lib")
-
 #include "Logger.h"
 #include "StringUtility.h"
+
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "dxcompiler.lib")
 
 #pragma endregion
 
@@ -445,7 +439,7 @@ void DrawSphere(VertexData* vertexDataSphere) {
 
 	const uint32_t kSubdivision = 16;
 
-	float pi = float(M_PI);
+	float pi = std::numbers::pi_v<float>;
 
 	const float kLonEvery = pi * 2.0f / float(kSubdivision);
 	const float kLatEvery = pi / float(kSubdivision);
@@ -602,23 +596,25 @@ LRESULT CALLBACK WindowProc(
 
 // Windowsアプリのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	
+	std::unique_ptr<D3DResourceLeakChecker> d3dResourceLeakChecker = std::make_unique<D3DResourceLeakChecker>();
+
 	// ポインタ
-	WinApp* winApp = nullptr;
+	std::unique_ptr<WinApp> winApp = nullptr;
 	// WindowsAPIの初期化
-	winApp = new WinApp();
+	winApp = std::make_unique<WinApp>();
+	
 	winApp->Initialize();
 
 	// DirectXの初期化
 	// ポインタ
 	DirectXCommon* dxCommon = nullptr;
 	dxCommon = new DirectXCommon();
-	dxCommon->Initialize(winApp);
+	dxCommon->Initialize(winApp.get());
 
 	//インプット
 	Input* input = nullptr;
 	input = new Input();
-	input->Initialize(winApp);
+	input->Initialize(winApp.get());
 
 #pragma endregion
 
@@ -973,6 +969,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ウィンドウの×ボタンが押されるまでループ
 	while (true) {
 
+
+
 		if (winApp->ProcessMessage()) {
 			// ゲームループを抜ける
 			break;
@@ -1098,7 +1096,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//winApp = nullptr;
 		delete input;
 
-		delete winApp;
 
 		return 0;
 	
