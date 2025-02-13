@@ -643,9 +643,6 @@ void DirectXCommon::UpdateFixFPS()
 
 void DirectXCommon::Finalize()
 {
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
 	CloseHandle(fenceEvent);
 }
 
