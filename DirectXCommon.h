@@ -6,7 +6,6 @@
 #include <format>
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
-#include "externals/DirectXTex/DirectXTex.h"
 
 //ImGui
 #include "externals/imgui/imgui.h"
@@ -17,9 +16,6 @@
 
 #include "WinApp.h"
 #include <array>
-#include <d3d12.h>
-#include <dxcapi.h>
-#include <dxgi1_6.h>
 #include <string>
 #include <wrl.h>
 #include <chrono>

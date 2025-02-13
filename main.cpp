@@ -1,22 +1,21 @@
 #pragma region include
 
 #include <Windows.h>
-//#include <cassert>
-#include <cstdint>
-#include <d3d12.h>
-#include <dxgi1_6.h>
-#include <format>
-#include <string>
+//#include <cstdint>
+//#include <d3d12.h>
+//#include <dxgi1_6.h>
+//#include <format>
+//#include <string>
 #include <dxgidebug.h>
-#include <dxcapi.h>
+//#include <dxcapi.h>
 #include <fstream>
 #include <sstream>
-#include "externals/DirectXTex/DirectXTex.h"
-#include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
+//#include "externals/DirectXTex/DirectXTex.h"
+//#include "externals/imgui/imgui.h"
+//#include "externals/imgui/imgui_impl_dx12.h"
+//#include "externals/imgui/imgui_impl_win32.h"
 #include "Input.h"
-#include "WinApp.h"
+//#include "WinApp.h"
 #include "DirectXCommon.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -24,8 +23,8 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
+//#pragma comment(lib, "d3d12.lib")
+//#pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
 
@@ -1220,7 +1219,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		        // 描画後処理
 		        dxCommon->PostDraw();
-				if()
+				if (input->PusuKey(DIK_SPACE)) {
+					break;
+				}
 	}
 
 	ImGui_ImplDX12_Shutdown();
