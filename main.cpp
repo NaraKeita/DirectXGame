@@ -1,21 +1,21 @@
 #pragma region include
 
 #include <Windows.h>
-//#include <cstdint>
+#include <cstdint>
 //#include <d3d12.h>
 //#include <dxgi1_6.h>
-//#include <format>
-//#include <string>
+#include <format>
+#include <string>
 #include <dxgidebug.h>
-//#include <dxcapi.h>
+#include <dxcapi.h>
 #include <fstream>
 #include <sstream>
-//#include "externals/DirectXTex/DirectXTex.h"
-//#include "externals/imgui/imgui.h"
-//#include "externals/imgui/imgui_impl_dx12.h"
-//#include "externals/imgui/imgui_impl_win32.h"
+#include "externals/DirectXTex/DirectXTex.h"
+#include "externals/imgui/imgui.h"
+#include "externals/imgui/imgui_impl_dx12.h"
+#include "externals/imgui/imgui_impl_win32.h"
 #include "Input.h"
-//#include "WinApp.h"
+#include "WinApp.h"
 #include "DirectXCommon.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -32,114 +32,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #include "StringUtility.h"
 
 #pragma endregion
-
-//std::wstring ConvertString(const std::string& str) {
-//	if (str.empty()) {
-//		return std::wstring();
-//	}
-//
-//	auto sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), NULL, 0);
-//	if (sizeNeeded == 0) {
-//		return std::wstring();
-//	}
-//	std::wstring result(sizeNeeded, 0);
-//	MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(&str[0]), static_cast<int>(str.size()), &result[0], sizeNeeded);
-//	return result;
-//}
-//
-//#pragma region コメントアウト
-//// ComplierShader関数
-//IDxcBlob* CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler) {
-//	// 1.hlslファイル
-//	//log(ConvertString(std::format(L"Begin CompileShader,path:{},profile:{}\n", filePath, profile)));
-//
-//	Microsoft::WRL::ComPtr<IDxcBlobEncoding> shaderSource = nullptr;
-//	
-//	HRESULT hr = dxcUtils->LoadFile(filePath.c_str(), nullptr, &shaderSource);
-//
-//	assert(SUCCEEDED(hr));
-//
-//	DxcBuffer shaderSourceBuffer;
-//	shaderSourceBuffer.Ptr = shaderSource->GetBufferPointer();
-//	shaderSourceBuffer.Size = shaderSource->GetBufferSize();
-//	shaderSourceBuffer.Encoding = DXC_CP_UTF8;
-//
-//	// 2.Complie
-//	LPCWSTR arguments[] = {
-//	    filePath.c_str(), L"-E", L"main", L"-T", profile, L"-Zi", L"-Qembed_debug", L"-Od", L"-Zpr",
-//	};
-//
-//	Microsoft::WRL::ComPtr<IDxcResult> shaderResult = nullptr;
-//	
-//	hr = dxcCompiler->Compile(&shaderSourceBuffer, arguments, _countof(arguments), includeHandler, IID_PPV_ARGS(&shaderResult));
-//
-//	assert(SUCCEEDED(hr));
-//
-//	// 3.警告エラー
-//
-//
-//	IDxcBlobUtf8* shaderError = nullptr;
-//	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
-//	if (shaderError != nullptr && shaderError->GetStringLength() != 0) {
-//	//	log(shaderError->GetStringPointer());
-//		// 警告エラーダメ絶対
-//		assert(false);
-//	}
-//	// 4.Complie結果
-//	IDxcBlob* shaderBlob = nullptr;
-//	hr = shaderResult->GetOutput(DXC_OUT_OBJECT, IID_PPV_ARGS(&shaderBlob), nullptr);
-//	assert(SUCCEEDED(hr));
-//
-//	//log(ConvertString(std::format(L"Compile Succeeded,path:{},profile:{}\n", filePath, profile)));
-//
-//	shaderSource->Release();
-//	shaderResult->Release();
-//
-//	return shaderBlob;
-//}
-#pragma endregion
-
-//DirectX::ScratchImage LoadTexture(const std::string& filePath) {
-//	// テクスチャファイル // byte関連
-//	DirectX::ScratchImage image{};
-//	/*std::wstring filePathW = ConvertString(filePath);
-//	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-//	assert(SUCCEEDED(hr));*/
-//
-//	// ミップマップ　//拡大縮小で使う
-//	DirectX::ScratchImage mipImages{};
-//	/*hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-//	assert(SUCCEEDED(hr));*/
-//
-//	// ミップマップ付きのデータを返す
-//	return mipImages;
-//}
-
-
-
-//ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata) {
-//
-//	D3D12_RESOURCE_DESC resourceDesc{};
-//	resourceDesc.Width = UINT(metadata.width);                             // 幅
-//	resourceDesc.Height = UINT(metadata.height);                           // 高さ
-//	resourceDesc.MipLevels = UINT16(metadata.miscFlags);                   // 数
-//	resourceDesc.DepthOrArraySize = UINT(metadata.arraySize);              // 奥行き　Textureの配置数
-//	resourceDesc.Format = metadata.format;                                 // format
-//	resourceDesc.SampleDesc.Count = 1;                                     // サンプリングカウント(1固定)
-//	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION(metadata.dimension); // textureの次元数
-//
-//	// 利用するHeapの設定
-//	D3D12_HEAP_PROPERTIES heapProperties{};
-//	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM;
-//	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-//	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-//
-//	// Resouceの生成
-//	ID3D12Resource* resource = nullptr;
-//	HRESULT hr = device->CreateCommittedResource(&heapProperties, D3D12_HEAP_FLAG_NONE, &resourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&resource));
-//	assert(SUCCEEDED(hr));
-//	return resource;
-//}
 
 #pragma region Vector
 struct Vector2 {
@@ -684,23 +576,6 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 	return modelData;
 }
 
-//void UploadTextureData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages) {
-//
-//	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-//
-//	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
-//		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-//		HRESULT hr = texture->WriteToSubresource(
-//		    UINT(mipLevel),
-//		    nullptr,              // 全領域へコピー
-//		    img->pixels,          // 元データアドレス
-//		    UINT(img->rowPitch),  // 1ラインサイズ
-//		    UINT(img->slicePitch) // 1枚サイズ
-//		);
-//		assert(SUCCEEDED(hr));
-//	}
-//}
-
 // ウィンドウプロシージャ
 LRESULT CALLBACK WindowProc(
     HWND hwnd, UINT msg,
@@ -1128,31 +1003,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 開発用UIの処理
 		//ImGui::ShowDemoWindow();
 
-		ImGui::Begin("Window"); 
-		// ここにテキストを入れられる
-		ImGui::Text("ImGuiText");
-		ImGui::Text("Sphere");
-		ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
-		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
-		ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
-		ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
-		ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
-		ImGui::SliderFloat3("SliderRotateSphere", *inputRotateSphere, -10.0f, 10.0f);
-		ImGui::InputFloat3("ScaleSphere", *inputScaleSphere);
-		ImGui::SliderFloat3("SliderScaleSphere", *inputScaleSphere, 0.5f, 5.0f);
-		ImGui::InputFloat("SphereTexture", &textureChange);
-		ImGui::Text("Sprite");
-		ImGui::InputFloat("SpriteX", &transformSprite.translate.x);
-		ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
-		ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
-		ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
-	/*	ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
-		ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
-		ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
-		ImGui::End();
-
 		Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 		Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
 		Matrix4x4 viewMatrix = Inverse(cameraMatrix);
@@ -1176,6 +1026,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		uvTransformMatrix = Multiply(uvTransformMatrix, MakeRotateZMatrix(uvTransformSprite.rotate.z));
 		uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 		materialDateSprite->uvTransform = uvTransformMatrix;
+
+		ImGui::Begin("Window");
+		// ここにテキストを入れられる
+		ImGui::Text("ImGuiText");
+		ImGui::Text("Sphere");
+		ImGui::InputFloat3("MaterialSphere", *inputMaterialSphere);
+		ImGui::SliderFloat3("SliderMaterialSphere", *inputMaterialSphere, 0.0f, 1.0f);
+		ImGui::InputFloat3("VertexSphere", *inputTransformSphere);
+		ImGui::SliderFloat3("SliderVertexSphere", *inputTransformSphere, -5.0f, 5.0f);
+		ImGui::InputFloat3("RotateSphere", *inputRotateSphere);
+		ImGui::SliderFloat3("SliderRotateSphere", *inputRotateSphere, -10.0f, 10.0f);
+		ImGui::InputFloat3("ScaleSphere", *inputScaleSphere);
+		ImGui::SliderFloat3("SliderScaleSphere", *inputScaleSphere, 0.5f, 5.0f);
+		ImGui::InputFloat("SphereTexture", &textureChange);
+		ImGui::Text("Sprite");
+		ImGui::InputFloat("SpriteX", &transformSprite.translate.x);
+		ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
+		ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
+		ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
+		/*	ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
+			ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
+			ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
+		ImGui::End();
 
 		ImGui::Render();
 		

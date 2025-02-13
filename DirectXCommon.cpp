@@ -755,7 +755,7 @@ void DirectXCommon::PostDraw() {
 #pragma region コマンド完了待ち
 	// FENCEを更新する
 	fenceValue++;
-
+	commandQueue->Signal(fence.Get(), fenceValue);
 	if (fence->GetCompletedValue() < fenceValue) {
 
 		fence->SetEventOnCompletion(fenceValue, fenceEvent);
