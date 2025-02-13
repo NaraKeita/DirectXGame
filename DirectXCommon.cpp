@@ -92,7 +92,7 @@ Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap
 void DirectXCommon::DeviceInitialize() {
 	
 #ifdef _DEBUG
-	Microsoft::WRL::ComPtr < ID3D12Debug1> debugController = nullptr;
+	Microsoft::WRL::ComPtr < ID3D12Debug1> debugController;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
 		// デバッグレイヤーを有効にする
 		debugController->EnableDebugLayer();
@@ -641,12 +641,7 @@ void DirectXCommon::UpdateFixFPS()
 	reference_ = std::chrono::steady_clock::now();
 }
 
-void DirectXCommon::DestroyShutdown()
-{
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-}
+
 
 void DirectXCommon::Finalize()
 {

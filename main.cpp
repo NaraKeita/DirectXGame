@@ -600,16 +600,6 @@ LRESULT CALLBACK WindowProc(
 
 // Windowsアプリのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-
-	// ポインタ
-	DirectXCommon* dxCommon = nullptr;
-
-	// ポインタ
-	WinApp* winApp = nullptr;
-	// WindowsAPIの初期化
-	winApp = new WinApp();
-	winApp->Initialize();
-
 	struct D3DResourceLeakChecker {
 		~D3DResourceLeakChecker() {
 			// リソースリークチェック
@@ -622,6 +612,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 		}
 	};
+	//D3DResourceLeakChecker apa;
+	// ポインタ
+	DirectXCommon* dxCommon = nullptr;
+
+	// ポインタ
+	WinApp* winApp = nullptr;
+	// WindowsAPIの初期化
+	winApp = new WinApp();
+	winApp->Initialize();
+
+
 
 	Input* input = nullptr;
 	input = new Input();
@@ -1085,14 +1086,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				// 実際のcommandListのImGui描画コマンドを挟む
 				ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
 
-		        // 描画後処理
-		        dxCommon->PostDraw();
+		// 描画後処理
+		dxCommon->PostDraw();
 				if (input->PusuKey(DIK_SPACE)) {
 					break;
 				}
 	}
 
-	dxCommon->DestroyShutdown();
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 	dxCommon->Finalize();
 
 
