@@ -22,6 +22,7 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
 
+
 std::wstring ConvertString(const std::string& str) {
 	if (str.empty()) {
 		return std::wstring();
@@ -125,6 +126,11 @@ struct Matrix3x3 {
 struct Matrix4x4 {
 	float m[4][4];
 };
+
+struct CameraForGPU {
+	Vector3 worldPosition;
+};
+
 
 Matrix4x4 MakeIdentity4x4() {
 	Matrix4x4 result{};
@@ -474,6 +480,7 @@ struct Material {
 	int32_t enableLighting;
 	float padding[3]; // 枠確保用06-01 9
 	Matrix4x4 uvTransform;
+	
 };
 
 struct TransformationMatrix {
@@ -1097,7 +1104,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
 	// RootParameter作成__
-	D3D12_ROOT_PARAMETER rootParameters[4] = {};
+	D3D12_ROOT_PARAMETER rootParameters[5] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 	rootParameters[0].Descriptor.ShaderRegister = 0; // Object3d.PS.hlsl の b0
@@ -1117,6 +1124,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;    // CBV
 	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // plxelshader
 	rootParameters[3].Descriptor.ShaderRegister = 1;                    // レジスタ番号
+
+	rootParameters[4].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;    // CBV
+	rootParameters[4].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // plxelshader
+	rootParameters[4].Descriptor.ShaderRegister = 2;                    // レジスタ番号
+
 
 	// 2でまとめる
 
@@ -1310,6 +1322,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	directionalLightSphereData->color = {1.0f, 1.0f, 1.0f, 1.0f};
 	directionalLightSphereData->direction = {0.0f, -1.0f, 0.0f};
 	directionalLightSphereData->intensity = 1.0f;
+
+
+	//カメラ用のリソース
+	ID3D12Resource* cameraResource = CreateBufferResource(device, sizeof(CameraForGPU));
+	// マテリアルにデータを書き込む
+	CameraForGPU* CameraData = nullptr;
+	// 書き込むためのアドレス
+	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&CameraData));
+	CameraData->worldPosition = { 0.0f, 0.0f, -10.5f };
 
 	// spriteのリソース
 	ID3D12Resource* materialResourceSprite = CreateBufferResource(device, sizeof(Material));
@@ -1512,6 +1533,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			}
 
 			commandList->SetGraphicsRootConstantBufferView(3, directionalLightSphereResource->GetGPUVirtualAddress());
+			
+			commandList->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+
 			commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 			commandList->DrawInstanced(SphereVertexNum, 1, 0, 0);
 
@@ -1581,6 +1605,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	vertexResourceSprite->Release();
 	transformationMatrixResourceSprite->Release();
 	indexResourceSprite->Release();
+
+	cameraResource->Release();
+
 	directionalLightSphereResource->Release();
 	vertexResourceModel->Release();
 	graphicsPipelineState->Release();
