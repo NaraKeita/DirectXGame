@@ -1128,8 +1128,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 
-		
-
 		// 入力の更新
 		input->Update();
 
@@ -1151,11 +1149,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::SliderFloat("SliderSpriteX", &transformSprite.translate.x, 0.0f, 1000.0f);
 		ImGui::InputFloat("SpriteY", &transformSprite.translate.y);
 		ImGui::SliderFloat("SliderSpriteY", &transformSprite.translate.y, 0.0f, 600.0f);
-		ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
+	/*	ImGui::InputFloat("SpriteZ", &transformSprite.translate.z);
 		ImGui::SliderFloat("SliderSpriteZ", &transformSprite.translate.z, 0.0f, 0.0f);
 		ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 		ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+		ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);*/
 		ImGui::End();
 
 		Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
@@ -1188,8 +1186,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//ImGui::ShowDemoWindow();
 		//// ImGuiの内部コマンド
 		//
-		// ImGui::Begin("Settings");
-		// ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);
+		/* ImGui::Begin("Settings");
+		 ImGui::ColorEdit4("material", &materialDateSphere->color.x, ImGuiColorEditFlags_AlphaPreview);*/
 		////ImGui::End();
 
 		//-------------入力デバイス追加-----------------//
@@ -1227,8 +1225,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//--------------------------------------------//
 
 
-		
-		
 		//描画前処理
 		 dxCommon->PreDraw();
 		
@@ -1259,25 +1255,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				dxCommon->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
 		//		// 実際のcommandListのImGui描画コマンドを挟む
-		//		ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
+				ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
 
 		//		// 画面に描く処理はすべて終わり、画面に映すので、状況をそうい
 		//		// 今回はResourceTargetからPresentにする
 		
-				ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList());
-
 		//		//// 出力ウィンドウへの文字出力
 		//		// OutputDebugStringA("Hello DirectX!\n");
 		        // 描画後処理
 		        dxCommon->PostDraw();
 		//}
 	}
-		// delete input;
 
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
-
 		 /*fence->Release();
 		 rtvDescriptorHeap->Release();
 		 srvDescriptorHeap->Release();
@@ -1330,6 +1322,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		//	debug->Release();
 		// }
 
+	delete input;
+
 	    dxCommon->Finalize();
 
 		// WindowsAPIの終了処理
@@ -1337,7 +1331,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// WindowsAPIの開放
 		
-		//winApp = nullptr;
+		winApp = nullptr;
 		delete dxCommon;
 		delete winApp;
 
