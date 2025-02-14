@@ -579,10 +579,8 @@ LRESULT CALLBACK WindowProc(
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//std::unique_ptr<D3DResourceLeakChecker> d3dResourceLeakChecker = std::make_unique<D3DResourceLeakChecker>();
 
-	D3DResourceLeakChecker* d3dResourceLeakChecker = nullptr;
-	d3dResourceLeakChecker = new D3DResourceLeakChecker();
-	d3dResourceLeakChecker->~D3DResourceLeakChecker();
-
+	D3DResourceLeakChecker d3dResourceLeakChecker;
+	
 	// ポインタ
 	std::unique_ptr<WinApp> winApp = nullptr;
 	// WindowsAPIの初期化
@@ -1070,7 +1068,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif
 		//mipImages.Release();
 		// mipImages2.Release();
-	delete d3dResourceLeakChecker;
+	
 	delete dxCommon;
 		
 	// WindowsAPIの終了処理
