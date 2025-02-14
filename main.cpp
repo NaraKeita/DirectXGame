@@ -1,34 +1,14 @@
-#pragma region include
-
 #include <Windows.h>
-#include <cstdint>
-#include <format>
-#include <string>
-#include <dxgidebug.h>
-#include <dxcapi.h>
 #include <fstream>
-#include <sstream>
 #include <memory>
-#include <math.h>
 #include <numbers>
-
-#include "externals/DirectXTex/DirectXTex.h"
-#include "externals/imgui/imgui.h"
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
 
 #include "Input.h"
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "D3DResourceLeakChecker.h"
-#include "Logger.h"
-#include "StringUtility.h"
 
-#pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "dxcompiler.lib")
-
-
-#pragma endregion
 
 #pragma region Vector
 struct Vector2 {
@@ -597,7 +577,11 @@ LRESULT CALLBACK WindowProc(
 
 // Windowsアプリのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	std::unique_ptr<D3DResourceLeakChecker> d3dResourceLeakChecker = std::make_unique<D3DResourceLeakChecker>();
+	//std::unique_ptr<D3DResourceLeakChecker> d3dResourceLeakChecker = std::make_unique<D3DResourceLeakChecker>();
+
+	D3DResourceLeakChecker* d3dResourceLeakChecker = nullptr;
+	d3dResourceLeakChecker = new D3DResourceLeakChecker();
+	d3dResourceLeakChecker->~D3DResourceLeakChecker();
 
 	// ポインタ
 	std::unique_ptr<WinApp> winApp = nullptr;
@@ -1086,7 +1070,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #endif
 		//mipImages.Release();
 		// mipImages2.Release();
-	
+	delete d3dResourceLeakChecker;
 	delete dxCommon;
 		
 	// WindowsAPIの終了処理
