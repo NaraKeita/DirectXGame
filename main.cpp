@@ -480,7 +480,7 @@ struct Material {
 	int32_t enableLighting;
 	float padding[3]; // 枠確保用06-01 9
 	Matrix4x4 uvTransform;
-	
+	float shininess;
 };
 
 struct TransformationMatrix {
@@ -1311,6 +1311,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	materialDateSphere->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	materialDateSphere->enableLighting = true;
 	materialDateSphere->uvTransform = MakeIdentity4x4();
+	materialDateSphere->shininess = 70;
 
 	// 球体マテリアルのライト用のリソース
 	ID3D12Resource* directionalLightSphereResource = CreateBufferResource(device, sizeof(DirectionalLight));
@@ -1483,6 +1484,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat2("UVTranlate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
 			ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
 			ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+			ImGui::DragFloat3("Light", &directionalLightSphereData->direction.x,0.01f, -1.0f, 1.0f);
 
 			// ImGuiの内部コマンド
 			ImGui::Render();

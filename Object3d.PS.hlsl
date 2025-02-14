@@ -49,8 +49,22 @@ PixelShaderOutput main(VertexShaderOutput input) {
 		
 		float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
 		float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-		output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
-	} else {
+		
+        float RdotE = dot(reflectLight, toEye);
+        float specularPow = pow(saturate(RdotE), gMaterial.shininess);
+		
+        float32_t3 diffuse =
+		gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+		
+        float32_t3 specular =
+		gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * float32_t3(1.0f, 1.0f, 1.0f);
+		
+        output.color.rgb = diffuse + specular;
+		
+        output.color.a = gMaterial.color.a * textureColor.a;
+		
+        //output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+    } else {
 		output.color = gMaterial.color * textureColor;
 	}
 
